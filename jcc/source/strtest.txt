@@ -1,0 +1,11 @@
+program StringTest:
+
+println("String tests")
+
+var str = "Hello"
+
+println(str)
+
+str = "In the end"
+println(str)
+endprogram

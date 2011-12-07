@@ -1,0 +1,469 @@
+/* caesar.jj - Caesar programming language grammar */
+
+options {
+  OUTPUT_DIRECTORY = "javasrc/caesar" ;
+//  MULTI=true;
+//  KEEP_LINE_COLUMN = false;  
+//  VISITOR = true;
+//  NODE_PACKAGE="caesar.tree";
+//  JJTREE_OUTPUT_DIRECTORY="javasrc/caesar/tree";
+}
+
+PARSER_BEGIN(Caesar)
+
+package caesar;
+
+import caesar.interpreter.CaesarInterpreter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import caesar.ast.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Caesar {
+  
+    private static final Logger logger = Logger.getLogger(Caesar.class.getName());
+    
+    //private static Map<String, Type> symTab = new TreeMap<String, Type>();
+    
+    public static void main( String[] args ) {
+      logger.setLevel(Level.ALL);
+      logger.log(Level.INFO, "Welcome to Caesar programming laguage!");         
+      Caesar parser = new Caesar( System.in );
+      try {
+	ProgramTree t = parser.Start(); 	
+	//t.dump("");
+	TreeVisitor v = new DumpCaesarVisitor();
+      
+	TreeVisitor interpreter = new CaesarInterpreter();
+	t.accept(v);
+	t.accept(interpreter);
+      } catch (Exception e) {
+	System.out.println(e.getMessage());
+	e.printStackTrace();
+      }
+    }
+  }
+
+PARSER_END(Caesar)
+
+
+
+/* token syntax: TOKEN : { < NAME : regexp > } */
+TOKEN : { < PROGRAM : "program" > }
+TOKEN : { < ENDPROGRAM : "endprogram" > }
+TOKEN : { < VAR : "var" > }
+TOKEN : { < ARRAY : "array" > }	
+TOKEN : { < IF : "if" > }
+TOKEN : { < ELSE : "else" > }
+TOKEN : { < ENDIF : "endif" > }
+TOKEN : { < WHILE : "while" > }
+TOKEN : { < ENDWHILE : "endwhile" > }
+TOKEN : { < FOR : "for" > }
+TOKEN : { < IN : "in" > }
+TOKEN : { < TO : ".." > }
+TOKEN : { < ENDFOR : "endfor" > }
+TOKEN : { < PRINTLN : "println" > }
+TOKEN : { < CLASS : "class" > }
+TOKEN : { < ENDCLASS : "endclass" > }
+TOKEN : { < NEW : "new" > }
+TOKEN : { < COLON : ":" > }
+TOKEN : { < COMMA : "," > }
+
+TOKEN : { < IDENT : <LETTER> ( <LETTER> | <DIGIT> )* > }
+
+TOKEN : { < ASSIGN : "=" > }
+TOKEN : { < PLUS : "+" > }
+TOKEN : { < MINUS : "-" > }
+TOKEN : { < MULTIPLY : "*" > }
+TOKEN : { < DIVIDE : "/" > }
+
+TOKEN : { < LBRC : "(" > }
+TOKEN : { < RBRC : ")" > }
+TOKEN : { < LABRC : "[" > }
+TOKEN : { < RABRC : "]" > }
+TOKEN : { < EQ : "==" > }
+TOKEN : { < NE : "!=" > }
+TOKEN : { < LT : "<" > }
+TOKEN : { < GT : ">" > }
+TOKEN : { < LE : "<=" > }
+TOKEN : { < GE : ">=" > }
+TOKEN : { < DOT : "." > }
+
+TOKEN : { < QUOTEDSTRING : "\"" (~["\"", "\n", "\r"])* ("\"" | "\n" | "\r") > }
+
+TOKEN : { < REAL_CONST : (<DIGIT>)+ <DOT> (<DIGIT>)* > }
+
+TOKEN : { < INT_CONST : (<DIGIT>)+ > }
+
+TOKEN : { < DIGIT : ["0"-"9"] > }
+TOKEN : { < LETTER : ["a"-"z"] | ["A"-"Z"] >}
+
+SKIP : {" "}
+SKIP : { "\n" | "\r" | "\r\n" }
+
+ProgramTree Start() : {  
+  IdentifierTree i;
+  CommandListTree c;
+  String n;
+}
+{
+  <PROGRAM> i = Identifier() <COLON> c = CommandList() <ENDPROGRAM> <EOF>
+  {
+    //i = new IdentifierTree(n);
+    return new ProgramTree(i, c);    
+  }
+}
+
+CommandListTree CommandList() : {
+  List<CommandTree> list = new ArrayList<CommandTree>();
+  CommandListTree r;
+  CommandTree c;
+}
+{
+ (
+   c = Command() 
+   {list.add(c);}
+ )*
+ {return new CommandListTree(list);}
+}
+
+/*CommandListRest(List<CommandTree> list) : {
+  CommandTree c;
+} 
+{
+  c = Command;
+  {list.add(c);}
+  (CommandListRest(list))?
+  {return new CommandListTree(list);}
+}*/
+
+CommandTree Command() : {
+  CommandTree c;
+} 
+{  
+  c = CreateVariableCmd() {return c;}  
+  | LOOKAHEAD(2) c = AssignVariableCmd() {return c;}
+  | c = IfCmd(){return c;}
+  | c = WhileCmd(){return c;}
+  | c = PrintlnCmd() {return c;}
+  | c = ClassDefinition() {return c;}
+  //| c = MethodCall() {return c;}
+  // TODO: other commands
+  
+}
+
+CreateVariableTree CreateVariableCmd() : {
+  String n;
+  String c;
+  ExpressionTree e;
+  IdentifierTree i = null;
+  Token t;
+} 
+{
+  <VAR> i = Identifier() <ASSIGN> 
+  
+  ((e = Expression())
+  {    
+    i.setType(e.getType());
+    return new CreateVariableTree(i, e);        
+  }
+  
+  |
+  (<NEW> t = <IDENT> <LBRC> <RBRC>))
+  {
+    i.setType(t.image);
+    return new CreateVariableTree(i, null);    
+  }  
+}
+
+CommandTree AssignVariableCmd() : {
+  String n;
+  ExpressionTree e;
+  IdentifierTree i;
+} 
+{
+   i = Identifier() <ASSIGN> e = Expression()
+  {
+    //i = new IdentifierTree(n);
+    return new AssignVariableTree(i, e);
+  }
+}
+
+CommandTree IfCmd() : {
+  BinaryTree bt;
+  CommandListTree c1;
+  CommandListTree c2;
+}
+{
+  <IF> bt = Condition() <COLON> c1 = CommandList() c2 = ElsePart()
+  {return new IfTree(bt, c1, c2);}
+}
+
+CommandListTree ElsePart() : {
+  CommandListTree cmd = null;
+}
+{
+  (<ELSE> cmd = CommandList() <ENDIF>
+  | <ENDIF>)  
+  {return cmd;}
+}
+
+BinaryTree Condition() : {
+  BinaryTree bt;
+  ExpressionTree e1;
+  ExpressionTree e2;
+  Operator op;
+}
+{
+  e1 = Expression() op = RelationalOperator() e2 = Expression()
+  {return new BinaryTree(op, e1, e2);}
+}
+
+Operator RelationalOperator() : {}
+{
+  <EQ>   {return Operator.EQ;} 
+  | <NE> {return Operator.NE;}
+  | <LT> {return Operator.LT;}
+  | <GT> {return Operator.GT;}
+  | <LE> {return Operator.LE;}
+  | <GE> {return Operator.GE;}
+}
+
+CommandTree WhileCmd() : {}
+{
+  <WHILE> Condition() <COLON> CommandList() <ENDWHILE>
+  {return null;}
+}
+
+PrintlnTree PrintlnCmd() : {
+  ExpressionTree e;
+}  
+{
+  <PRINTLN> <LBRC> e = Expression() <RBRC>
+  {return new PrintlnTree(e);}
+}
+
+ClassDefinitionTree ClassDefinition() : {
+  IdentifierTree className;
+  List<CreateVariableTree> vars = new LinkedList<CreateVariableTree>(); 
+  CreateVariableTree var;
+}
+{
+  <CLASS> className = Identifier() <COLON>
+  (
+    var = CreateVariableCmd()
+    {vars.add(var);}
+  )*
+  <ENDCLASS>
+  {
+    return new ClassDefinitionTree(className, vars);    
+  }
+}
+
+/*
+MethodCallTree MethodCall() : {
+  String objName;
+  IdentifierTree i;
+  String methodName;
+  IdentifierTree m;
+}
+{
+  objName = Identifier() <DOT> methodName = Identifier() <LBRC> <RBRC>
+  {
+    i = new IdentifierTree(objName);
+    m = new IdentifierTree(methodName);
+    return new MethodCallTree(i, m);
+  }
+}
+*/
+
+ExpressionTree Expression() : {
+  ExpressionTree t;
+  ExpressionTree r;
+}
+{
+  t = Term() 
+  r = ExpressionX(t)
+  {return r;}
+}
+
+ExpressionTree ExpressionX(ExpressionTree e1) : {
+  Operator op;
+  ExpressionTree e2;
+  BinaryTree t;
+  ExpressionTree r;
+} 
+{
+  (
+    <PLUS>
+    {op = Operator.PLUS;}
+    e2 = Term() 
+    {t = new BinaryTree(op, e1, e2);}
+    r = ExpressionX(t)
+    {return r;}
+    |
+    <MINUS>
+    {op = Operator.MINUS;}
+    e2 = Term() 
+    {t = new BinaryTree(op, e1, e2);}
+    r = ExpressionX(t)
+    {return r;}
+  )?
+  {return e1;}
+}
+
+ExpressionTree Term() : {
+  ExpressionTree t;
+  ExpressionTree r;  
+}
+{
+  t = Factor()
+  r = TermX(t)
+  {return r;}
+}
+
+ExpressionTree TermX(ExpressionTree e1) : {
+  Operator op;
+  ExpressionTree e2;
+  BinaryTree bt;
+  ExpressionTree r;
+}
+{
+  (
+  <MULTIPLY>
+  {op = Operator.MULTIPLY;}
+  e2 = Factor()
+  {bt = new BinaryTree(op, e1, e2);}
+  r = TermX(bt)
+  {return r;}
+   |
+   <DIVIDE>
+   {op = Operator.DIVIDE;}
+   e2 = Factor()
+   {bt = new BinaryTree(op, e1, e2);}
+   r = TermX(bt)
+   {return r;}
+  )?
+  {return e1;}
+}
+
+ExpressionTree Factor() : {
+  ExpressionTree e;
+  IdentifierTree i;
+  String n;
+  String m;
+  LiteralTree l;
+}
+{
+    <LBRC>
+    e = Expression() 
+    {return e;}
+    <RBRC>
+  | 
+    i = Identifier()
+    {return i;}
+/*    e = FactorRest(i.getName())
+    {
+      if(e == null) {
+	//i = new IdentifierTree(n);
+	return i;
+      } else {
+	//i = new IdentifierTree(n, e);
+	return e;
+      }
+    }*/
+  | l = IntConst()
+    {return l;}
+  | l = RealConst()
+    {return l;}
+  | l = StringConst()
+    {return l;}  
+}
+
+ExpressionTree FactorRest(String n) : {
+  ExpressionTree e = null;
+  String m;
+}
+{
+    (<LABRC> e = Expression() <RABRC>
+     {return new FieldIdentifierTree(n, e);}
+    )?
+    {return new FieldIdentifierTree(n);}
+}
+
+IdentifierTree Identifier() : {
+  Token t;
+  Token tt = null;
+  IdentifierTree it;
+  MethodIdentifierTree mit;
+}
+{    
+  t = <IDENT>  
+  (    
+   (
+     <DOT> it = ClassIdentifier(t)
+     {return it;}
+   )
+  |
+   (
+     <LBRC> <RBRC> 
+     {
+      return new MethodIdentifierTree(t.image);
+     }
+   )    
+  )?
+  {    
+    it = new FieldIdentifierTree(t.image);
+    return it;
+  }
+  
+}
+
+IdentifierTree ClassIdentifier(Token t) : {
+  Token tt;
+  IdentifierTree it;
+}
+{
+  tt = <IDENT>
+  (
+    <LBRC> <RBRC> 
+    {
+      it = new ClassMethodIdentifierTree(t.image, tt.image);
+      return it;
+    }
+  )?
+  {
+    it = new ClassIdentifierTree(t.image, tt.image);
+    return it;
+  }
+}
+
+LiteralTree StringConst() : {
+  Token t;
+}
+{
+  t = <QUOTEDSTRING>
+  {
+    String str = t.image.substring(1, t.image.length()-1);
+    return new LiteralTree(str, "String");
+  }
+}
+LiteralTree RealConst() : {
+  Token t;
+}
+{
+  t = <REAL_CONST>
+  {return new LiteralTree(Double.parseDouble(t.image), "Real");}
+}
+
+LiteralTree IntConst() : {
+  Token t;
+} 
+{
+  t = <INT_CONST>
+  {return new LiteralTree(Integer.parseInt(t.image), "Integer");}
+}

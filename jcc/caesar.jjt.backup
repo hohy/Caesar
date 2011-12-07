@@ -1,0 +1,254 @@
+/* caesar.jj - Caesar programming language grammar */
+
+options {
+  OUTPUT_DIRECTORY = "javasrc/caesar" ;
+  MULTI=true;
+  KEEP_LINE_COLUMN = false;  
+  VISITOR = true;
+  NODE_PACKAGE="caesar.tree";
+  JJTREE_OUTPUT_DIRECTORY="javasrc/caesar/tree";
+}
+
+PARSER_BEGIN(Caesar)
+
+package caesar;
+
+import caesar.interpreter.CaesarInterpreter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Caesar {
+  
+  private static final Logger logger = Logger.getLogger(Caesar.class.getName());
+  
+    public static void main( String[] args ) {
+      logger.setLevel(Level.ALL);
+      logger.log(Level.INFO, "Welcome to Caesar programming laguage!");         
+      Caesar parser = new Caesar( System.in );
+      try {
+	ASTStart t = parser.Start(); 	
+	t.dump("");
+	CaesarVisitor v = new DumpCaesarVisitor();
+      
+	CaesarVisitor interpreter = new CaesarInterpreter();
+	t.jjtAccept(v, null);
+	t.jjtAccept(interpreter, null);
+      } catch (Exception e) {
+	System.out.println(e.getMessage());
+	e.printStackTrace();
+      }
+    }
+  }
+
+PARSER_END(Caesar)
+
+
+
+/* token syntax: TOKEN : { < NAME : regexp > } */
+TOKEN : { < PROGRAM : "program" > }
+TOKEN : { < ENDPROGRAM : "endprogram" > }
+TOKEN : { < VAR : "var" > }
+TOKEN : { < ARRAY : "array" > }	
+TOKEN : { < IF : "if" > }
+TOKEN : { < ELSE : "else" > }
+TOKEN : { < ENDIF : "endif" > }
+TOKEN : { < WHILE : "while" > }
+TOKEN : { < ENDWHILE : "endwhile" > }
+TOKEN : { < FOR : "for" > }
+TOKEN : { < IN : "in" > }
+TOKEN : { < TO : ".." > }
+TOKEN : { < ENDFOR : "endfor" > }
+TOKEN : { < PRINTLN : "println" > }
+TOKEN : { < COLON : ":" > }
+TOKEN : { < COMMA : "," > }
+
+TOKEN : { < IDENT : <LETTER> ( <LETTER> | <DIGIT> )* > }
+
+TOKEN : { < ASSIGN : "=" > }
+TOKEN : { < PLUS : "+" > }
+TOKEN : { < MINUS : "-" > }
+TOKEN : { < MULTIPLY : "*" > }
+TOKEN : { < DIVIDE : "/" > }
+
+TOKEN : { < LBRC : "(" > }
+TOKEN : { < RBRC : ")" > }
+TOKEN : { < LABRC : "[" > }
+TOKEN : { < RABRC : "]" > }
+TOKEN : { < EQ : "==" > }
+TOKEN : { < NE : "!=" > }
+TOKEN : { < LT : "<" > }
+TOKEN : { < GT : ">" > }
+TOKEN : { < LE : "<=" > }
+TOKEN : { < GE : ">=" > }
+TOKEN : { < DOT : "." > }
+
+TOKEN : { < REAL_CONST : (<DIGIT>)+ <DOT> (<DIGIT>)* > }
+
+TOKEN : { < INT_CONST : (<DIGIT>)+ > }
+
+TOKEN : { < DIGIT : ["0"-"9"] > }
+TOKEN : { < LETTER : ["a"-"z"] | ["A"-"Z"] >}
+
+SKIP : {" "}
+SKIP : { "\n" | "\r" | "\r\n" }
+
+ASTStart Start() : {}
+{
+  <PROGRAM> Identifier() <COLON> CommandList() <ENDPROGRAM> <EOF>
+  {return jjtThis;}
+}
+
+void CommandList() : {}
+{
+  (Command() CommandList())?
+}
+
+void Command() : {} 
+{
+  CreateVariableCmd()
+  | AssignVariableCmd()
+  | IfCmd()
+  | WhileCmd()
+  | PrintlnCmd()
+  // TODO: other commands
+}
+
+void CreateVariableCmd() : {} 
+{
+  <VAR> Identifier() <ASSIGN> Expression()
+}
+
+void AssignVariableCmd() : {} 
+{
+  <IDENT> <ASSIGN> Expression()
+}
+
+void IfCmd() : {}
+{
+  <IF> Condition() <COLON> CommandList() ElsePart()
+}
+
+void ElsePart() : {}
+{
+  <ELSE> CommandList() <ENDIF>
+  | <ENDIF>
+}
+
+void Condition() : {}
+{
+  Expression() RelationalOperator() Expression()
+}
+
+void RelationalOperator() : {}
+{
+  <EQ>   {jjtThis.setOperator(Operator.EQ);} 
+  | <NE> {jjtThis.setOperator(Operator.NE);}
+  | <LT> {jjtThis.setOperator(Operator.LT);}
+  | <GT> {jjtThis.setOperator(Operator.GT);}
+  | <LE> {jjtThis.setOperator(Operator.LE);}
+  | <GE> {jjtThis.setOperator(Operator.GE);}
+}
+
+void WhileCmd() : {}
+{
+  <WHILE> Condition() <COLON> CommandList() <ENDWHILE>
+}
+
+void PrintlnCmd() : {}  
+{
+  <PRINTLN> <LBRC> Expression() <RBRC>
+}
+
+void Expression() : {}
+{
+  Term() 
+  ExpressionX()
+}
+
+void ExpressionX() : {
+  Operator op;
+} 
+{
+  (
+    <PLUS> Term() ExpressionX()
+    {jjtThis.setOperator(Operator.PLUS);}
+    |
+    <MINUS> Term() ExpressionX()
+    {jjtThis.setOperator(Operator.MINUS);}
+  )?
+//  {jjtThis.setOperator(Operator.NULL);}
+}
+
+void Term() : {}
+{
+  Factor() 
+  TermX()  
+}
+
+void TermX() : {
+  Operator op;
+}
+{
+  (<MULTIPLY> Factor() TermX()
+  {jjtThis.setOperator(Operator.MULTIPLY);}
+   |
+   <DIVIDE> Factor() TermX()
+   {jjtThis.setOperator(Operator.DIVIDE);}
+  )?
+//  {jjtThis.setOperator(Operator.NULL);}
+}
+
+void Factor() : {}
+{
+  <LBRC> Expression() <RBRC>
+  | Identifier() FactorRest()
+  | IntConst()
+  | RealConst()
+}
+
+void FactorRest() : {}
+{
+    (<LABRC> Expression() <RABRC>)?
+}
+
+void Identifier() : {
+  Token t;
+}
+{
+  t = <IDENT>
+  {
+    jjtThis.setName(t.image);
+  }
+}
+
+void IntConst() : {
+  Token t;
+} 
+{
+  t = <INT_CONST>
+  {jjtThis.setValue(Integer.parseInt(t.image));}
+}
+
+void RealConst() : {
+  Token t;
+}
+{
+  t = <REAL_CONST>
+  {jjtThis.setValue(Double.parseDouble(t.image));}
+}
+// examples... DELETE THIS
+/*
+TOKEN : { < PLUS : "+" > }
+TOKEN : { < NUMBER : (["0"-"9"])+ > }
+
+void Start() :
+{}
+{
+<NUMBER>
+(
+  <PLUS>
+  <NUMBER>
+)*
+<EOF>
+}
+*/

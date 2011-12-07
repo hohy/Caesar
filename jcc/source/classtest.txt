@@ -1,0 +1,15 @@
+program ClassTest:
+
+class MyClass:
+    var a = 10
+    var b = "Hello"
+    var c = 30
+endclass
+
+var obj = new MyClass()
+
+println(obj.b)
+obj.b = "Juchuhuhu"
+println(obj.b)
+
+endprogram
