@@ -69,6 +69,8 @@ TOKEN : { < ENDFOR : "endfor" > }
 TOKEN : { < PRINTLN : "println" > }
 TOKEN : { < CLASS : "class" > }
 TOKEN : { < ENDCLASS : "endclass" > }
+TOKEN : { < DEF : "def" > }
+TOKEN : { < ENDDEF : "enddef" > }
 TOKEN : { < NEW : "new" > }
 TOKEN : { < COLON : ":" > }
 TOKEN : { < COMMA : "," > }
@@ -250,18 +252,38 @@ PrintlnTree PrintlnCmd() : {
 ClassDefinitionTree ClassDefinition() : {
   IdentifierTree className;
   List<CreateVariableTree> vars = new LinkedList<CreateVariableTree>(); 
+  List<MethodDefinitionTree> methods = new LinkedList<MethodDefinitionTree>();
   CreateVariableTree var;
+  MethodDefinitionTree mth;
 }
 {
   <CLASS> className = Identifier() <COLON>
   (
     var = CreateVariableCmd()
     {vars.add(var);}
+    |
+    mth = MethodDefinition()
+    {methods.add(mth);}
   )*
   <ENDCLASS>
   {
     return new ClassDefinitionTree(className, vars);    
   }
+}
+
+MethodDefinitionTree MethodDefinition() : {
+    IdentifierTree returnType;
+    IdentifierTree methodName;
+    CommandListTree cmnds;
+}
+{
+  <DEF>
+  returnType = Identifier()
+  methodName = Identifier()
+  <COLON>
+  cmnds = CommandList()
+  <ENDDEF>
+  {return new MethodDefinitionTree(returnType, methodName, cmnds);}
 }
 
 /*

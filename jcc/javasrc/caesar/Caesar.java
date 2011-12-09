@@ -274,7 +274,9 @@ public class Caesar implements CaesarConstants {
   static final public ClassDefinitionTree ClassDefinition() throws ParseException {
   IdentifierTree className;
   List<CreateVariableTree> vars = new LinkedList<CreateVariableTree>();
+  List<MethodDefinitionTree> methods = new LinkedList<MethodDefinitionTree>();
   CreateVariableTree var;
+  MethodDefinitionTree mth;
     jj_consume_token(CLASS);
     className = Identifier();
     jj_consume_token(COLON);
@@ -282,17 +284,44 @@ public class Caesar implements CaesarConstants {
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VAR:
+      case DEF:
         ;
         break;
       default:
         jj_la1[6] = jj_gen;
         break label_2;
       }
-      var = CreateVariableCmd();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VAR:
+        var = CreateVariableCmd();
      vars.add(var);
+        break;
+      case DEF:
+        mth = MethodDefinition();
+     methods.add(mth);
+        break;
+      default:
+        jj_la1[7] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     }
     jj_consume_token(ENDCLASS);
     {if (true) return new ClassDefinitionTree(className, vars);}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public MethodDefinitionTree MethodDefinition() throws ParseException {
+    IdentifierTree returnType;
+    IdentifierTree methodName;
+    CommandListTree cmnds;
+    jj_consume_token(DEF);
+    returnType = Identifier();
+    methodName = Identifier();
+    jj_consume_token(COLON);
+    cmnds = CommandList();
+    jj_consume_token(ENDDEF);
+   {if (true) return new MethodDefinitionTree(returnType, methodName, cmnds);}
     throw new Error("Missing return statement in function");
   }
 
@@ -347,13 +376,13 @@ MethodCallTree MethodCall() : {
      {if (true) return r;}
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[8] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[9] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -395,13 +424,13 @@ MethodCallTree MethodCall() : {
     {if (true) return r;}
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -438,7 +467,7 @@ MethodCallTree MethodCall() : {
      {if (true) return l;}
       break;
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -456,7 +485,7 @@ MethodCallTree MethodCall() : {
       {if (true) return new FieldIdentifierTree(n, e);}
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[13] = jj_gen;
       ;
     }
      {if (true) return new FieldIdentifierTree(n);}
@@ -484,13 +513,13 @@ MethodCallTree MethodCall() : {
       {if (true) return new MethodIdentifierTree(t.image);}
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
       ;
     }
     it = new FieldIdentifierTree(t.image);
@@ -510,7 +539,7 @@ MethodCallTree MethodCall() : {
       {if (true) return it;}
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
     it = new ClassIdentifierTree(t.image, tt.image);
@@ -573,16 +602,16 @@ MethodCallTree MethodCall() : {
     return false;
   }
 
+  static private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_4() {
     if (jj_scan_token(IDENT)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_5()) jj_scanpos = xsp;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
     return false;
   }
 
@@ -598,7 +627,7 @@ MethodCallTree MethodCall() : {
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[16];
+  static final private int[] jj_la1 = new int[17];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -606,10 +635,10 @@ MethodCallTree MethodCall() : {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x10c128,0x8,0xc120,0x4120000,0xc0,0xc0000000,0x8,0xc00000,0xc00000,0x3000000,0x3000000,0x4100000,0x10000000,0x4000000,0x4000000,0x4000000,};
+      jj_la1_0 = new int[] {0x40c128,0x8,0xc120,0x10480000,0xc0,0x0,0x20008,0x20008,0x3000000,0x3000000,0xc000000,0xc000000,0x10400000,0x40000000,0x10000000,0x10000000,0x10000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0xe0,0x0,0xf,0x0,0x0,0x0,0x0,0x0,0xe0,0x0,0x10,0x10,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x380,0x0,0x3f,0x0,0x0,0x0,0x0,0x0,0x0,0x380,0x0,0x40,0x40,0x0,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[1];
   static private boolean jj_rescan = false;
@@ -633,7 +662,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -648,7 +677,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -666,7 +695,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -677,7 +706,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -694,7 +723,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -704,7 +733,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -816,12 +845,12 @@ MethodCallTree MethodCall() : {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[46];
+    boolean[] la1tokens = new boolean[48];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 17; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -833,7 +862,7 @@ MethodCallTree MethodCall() : {
         }
       }
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 48; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -1,0 +1,13 @@
+program MethodsTest:
+
+class MethodCls:
+
+ def void mthd ():
+  var x = 5
+  var y = 10
+  println(x + y)
+ enddef
+
+endclass
+
+endprogram

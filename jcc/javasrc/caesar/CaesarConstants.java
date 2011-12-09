@@ -43,55 +43,59 @@ public interface CaesarConstants {
   /** RegularExpression Id. */
   int ENDCLASS = 16;
   /** RegularExpression Id. */
-  int NEW = 17;
+  int DEF = 17;
   /** RegularExpression Id. */
-  int COLON = 18;
+  int ENDDEF = 18;
   /** RegularExpression Id. */
-  int COMMA = 19;
+  int NEW = 19;
   /** RegularExpression Id. */
-  int IDENT = 20;
+  int COLON = 20;
   /** RegularExpression Id. */
-  int ASSIGN = 21;
+  int COMMA = 21;
   /** RegularExpression Id. */
-  int PLUS = 22;
+  int IDENT = 22;
   /** RegularExpression Id. */
-  int MINUS = 23;
+  int ASSIGN = 23;
   /** RegularExpression Id. */
-  int MULTIPLY = 24;
+  int PLUS = 24;
   /** RegularExpression Id. */
-  int DIVIDE = 25;
+  int MINUS = 25;
   /** RegularExpression Id. */
-  int LBRC = 26;
+  int MULTIPLY = 26;
   /** RegularExpression Id. */
-  int RBRC = 27;
+  int DIVIDE = 27;
   /** RegularExpression Id. */
-  int LABRC = 28;
+  int LBRC = 28;
   /** RegularExpression Id. */
-  int RABRC = 29;
+  int RBRC = 29;
   /** RegularExpression Id. */
-  int EQ = 30;
+  int LABRC = 30;
   /** RegularExpression Id. */
-  int NE = 31;
+  int RABRC = 31;
   /** RegularExpression Id. */
-  int LT = 32;
+  int EQ = 32;
   /** RegularExpression Id. */
-  int GT = 33;
+  int NE = 33;
   /** RegularExpression Id. */
-  int LE = 34;
+  int LT = 34;
   /** RegularExpression Id. */
-  int GE = 35;
+  int GT = 35;
   /** RegularExpression Id. */
-  int DOT = 36;
+  int LE = 36;
   /** RegularExpression Id. */
-  int QUOTEDSTRING = 37;
+  int GE = 37;
   /** RegularExpression Id. */
-  int REAL_CONST = 38;
+  int DOT = 38;
   /** RegularExpression Id. */
-  int INT_CONST = 39;
+  int QUOTEDSTRING = 39;
   /** RegularExpression Id. */
-  int DIGIT = 40;
+  int REAL_CONST = 40;
   /** RegularExpression Id. */
-  int LETTER = 41;
+  int INT_CONST = 41;
+  /** RegularExpression Id. */
+  int DIGIT = 42;
+  /** RegularExpression Id. */
+  int LETTER = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -115,6 +119,8 @@ public interface CaesarConstants {
     "\"println\"",
     "\"class\"",
     "\"endclass\"",
+    "\"def\"",
+    "\"enddef\"",
     "\"new\"",
     "\":\"",
     "\",\"",

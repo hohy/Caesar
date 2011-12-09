@@ -12,6 +12,7 @@ import caesar.ast.ExpressionTree;
 import caesar.ast.FieldIdentifierTree;
 import caesar.ast.IfTree;
 import caesar.ast.LiteralTree;
+import caesar.ast.MethodDefinitionTree;
 import caesar.ast.MethodIdentifierTree;
 import caesar.ast.Operator;
 import caesar.ast.PrintlnTree;
@@ -337,6 +338,11 @@ public class CaesarInterpreter implements TreeVisitor {
         logger.fine(cls.toString());
     }
 
+    @Override
+    public void visit(MethodDefinitionTree aThis) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }    
+    
 //    @Override
 //    public void visit(MethodCallTree t) {
 //        String objName = t.getObjectIdentifier().getName();
@@ -568,5 +574,5 @@ public class CaesarInterpreter implements TreeVisitor {
         if(result != null) return result;
         throw new Exception("Unknown class " + t.getType());
     }
-
+    
 }

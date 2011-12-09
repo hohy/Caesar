@@ -12,6 +12,7 @@ import caesar.ast.FieldIdentifierTree;
 import caesar.ast.IdentifierTree;
 import caesar.ast.IfTree;
 import caesar.ast.LiteralTree;
+import caesar.ast.MethodDefinitionTree;
 import caesar.ast.MethodIdentifierTree;
 import caesar.ast.PrintlnTree;
 import caesar.ast.ProgramTree;
@@ -139,6 +140,16 @@ public class DumpCaesarVisitor implements TreeVisitor {
     @Override
     public void visit(FieldIdentifierTree t) {
         System.out.println(getSpaces() + "Field identifier " + t.getName());
+    }
+
+    @Override
+    public void visit(MethodDefinitionTree t) {
+        System.out.println(getSpaces() + "Method " + t.getName());
+        stackDepth++;
+        System.out.println("Return Type:");
+        t.getReturnType().accept(this);
+        System.out.println("Body:");
+        t.getCommands().accept(this);
     }
 
     
