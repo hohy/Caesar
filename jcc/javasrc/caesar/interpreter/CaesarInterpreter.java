@@ -31,7 +31,7 @@ public class CaesarInterpreter implements TreeVisitor {
 
     private static final Logger logger = Logger.getLogger(CaesarInterpreter.class.getName());
     
-    private InterpreterEnviroment currentEnv;
+    private InterpreterEnvironment currentEnv;
     private Map<String, InterpreterClass> classTable;
     private String currentIdentifier;
     private InterpreterStack stack;
@@ -43,7 +43,7 @@ public class CaesarInterpreter implements TreeVisitor {
      */
     @Override
     public void visit(ProgramTree t) {       
-        currentEnv = new InterpreterEnviroment(null);
+        currentEnv = new InterpreterEnvironment(null);
         classTable = new TreeMap<String, InterpreterClass>();
         heap = Heap.getInstance(); 
         stack = InterpreterStack.getInstance();

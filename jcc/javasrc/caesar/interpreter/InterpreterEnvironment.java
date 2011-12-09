@@ -7,11 +7,11 @@ import java.util.TreeMap;
  *
  * @author hohy
  */
-public class InterpreterEnviroment {
+public class InterpreterEnvironment {
     private Map<String, InterpreterObject> vars;
-    private InterpreterEnviroment upperEnv;
+    private InterpreterEnvironment upperEnv;
 
-    public InterpreterEnviroment(InterpreterEnviroment upperEnv) {
+    public InterpreterEnvironment(InterpreterEnvironment upperEnv) {
         this.vars = new TreeMap<String, InterpreterObject>();
         this.upperEnv = upperEnv;
     }
