@@ -9,7 +9,6 @@ import caesar.ast.CommandListTree;
 import caesar.ast.CommandTree;
 import caesar.ast.CreateVariableTree;
 import caesar.ast.FieldIdentifierTree;
-import caesar.ast.IdentifierTree;
 import caesar.ast.IfTree;
 import caesar.ast.LiteralTree;
 import caesar.ast.MethodDefinitionTree;
@@ -118,7 +117,12 @@ public class DumpCaesarVisitor implements TreeVisitor {
             vartree.getIdentifier().accept(this);
             if(vartree.getExp() != null) vartree.getExp().accept(this);
         }
-        stackDepth--;        
+        stackDepth--;
+        System.out.println(getSpaces() + "methods:");
+        stackDepth++;
+        for (MethodDefinitionTree mthtree : t.getMethods()) {
+            mthtree.accept(this);
+        }
         stackDepth--;
     }
 
@@ -144,11 +148,11 @@ public class DumpCaesarVisitor implements TreeVisitor {
 
     @Override
     public void visit(MethodDefinitionTree t) {
-        System.out.println(getSpaces() + "Method " + t.getName());
+        System.out.println(getSpaces() + "Method " + t.getName().getName());
         stackDepth++;
-        System.out.println("Return Type:");
+        System.out.println(getSpaces() + "Return Type:");
         t.getReturnType().accept(this);
-        System.out.println("Body:");
+        System.out.println(getSpaces() + "Body:");
         t.getCommands().accept(this);
     }
 

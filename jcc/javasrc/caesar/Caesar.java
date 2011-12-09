@@ -307,7 +307,7 @@ public class Caesar implements CaesarConstants {
       }
     }
     jj_consume_token(ENDCLASS);
-    {if (true) return new ClassDefinitionTree(className, vars);}
+    {if (true) return new ClassDefinitionTree(className, vars, methods);}
     throw new Error("Missing return statement in function");
   }
 

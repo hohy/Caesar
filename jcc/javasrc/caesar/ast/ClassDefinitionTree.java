@@ -14,10 +14,12 @@ public class ClassDefinitionTree extends CommandTree {
 
     private IdentifierTree identifierTree;
     private List<CreateVariableTree> vars;
+    private List<MethodDefinitionTree> methods;
 
-    public ClassDefinitionTree(IdentifierTree identifierTree, List<CreateVariableTree> vars) {
+    public ClassDefinitionTree(IdentifierTree identifierTree, List<CreateVariableTree> vars, List<MethodDefinitionTree> methods) {
         this.identifierTree = identifierTree;
         this.vars = vars;
+        this.methods = methods;
     }
     
     @Override
@@ -33,4 +35,7 @@ public class ClassDefinitionTree extends CommandTree {
         return vars;
     }
 
+    public List<MethodDefinitionTree> getMethods() {
+        return methods;
+    }
 }
