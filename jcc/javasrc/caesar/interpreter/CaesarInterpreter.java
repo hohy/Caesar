@@ -1,23 +1,8 @@
 package caesar.interpreter;
 
-import caesar.ast.AssignVariableTree;
-import caesar.ast.BinaryTree;
-import caesar.ast.ClassDefinitionTree;
-import caesar.ast.ClassIdentifierTree;
-import caesar.ast.ClassMethodIdentifierTree;
-import caesar.ast.CommandListTree;
-import caesar.ast.CommandTree;
-import caesar.ast.CreateVariableTree;
-import caesar.ast.ExpressionTree;
-import caesar.ast.FieldIdentifierTree;
-import caesar.ast.IfTree;
-import caesar.ast.LiteralTree;
-import caesar.ast.MethodDefinitionTree;
-import caesar.ast.MethodIdentifierTree;
-import caesar.ast.Operator;
-import caesar.ast.PrintlnTree;
-import caesar.ast.ProgramTree;
-import caesar.ast.TreeVisitor;
+import caesar.ast.*;
+import caesar.interpreter.buildin.IntegerClass;
+
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -202,13 +187,13 @@ public class CaesarInterpreter implements TreeVisitor {
             InterpreterClass rightOp = getClass(t.getRightOperand());        
             switch(op) {
                 case PLUS: 
-                    leftOp.callOperation("add" + rightOp.getName());
+                    leftOp.callOperation(this, "add" + rightOp.getName());
                     break;
-                case MINUS: leftOp.callOperation("substract" + rightOp.getName()); break;
-                case MULTIPLY: leftOp.callOperation("multiply" + rightOp.getName());; break;
-                case DIVIDE: leftOp.callOperation("divide" + rightOp.getName()); break;
+                case MINUS: leftOp.callOperation(this, "substract" + rightOp.getName()); break;
+                case MULTIPLY: leftOp.callOperation(this, "multiply" + rightOp.getName());; break;
+                case DIVIDE: leftOp.callOperation(this, "divide" + rightOp.getName()); break;
                 case EQ:
-                    leftOp.callOperation("equals");
+                    leftOp.callOperation(this, "equals");
     //                InterpreterObject opb = stack.pop();
     //                InterpreterObject opa = stack.pop();
     //                opa.getType().callOperation("equals", opb);
@@ -339,7 +324,14 @@ public class CaesarInterpreter implements TreeVisitor {
     }
 
     @Override
-    public void visit(MethodDefinitionTree aThis) {
+    public void visit(MethodDefinitionTree t) {
+        try {
+            InterpreterClass cls = getClass(t.getClassName().getName());
+            InterpreterOperation operation = new InterpreterMethod(t);
+            cls.addOperation(t.getName().getName(), operation);
+        } catch (Exception e) {
+            logger.finest("Unknown class " + t.getClassName().getName());
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }    
     
@@ -366,30 +358,7 @@ public class CaesarInterpreter implements TreeVisitor {
     private void initClassTable() {
         
         // add iteger class
-        InterpreterClass integer = new InterpreterClass("Integer", 4);
-        
-        integer.addOperation("equals", new InterpreterOperation() {
-
-            @Override
-            public void call() {
-                logger.log(Level.FINE, "equals from IntegerClass is called.");
-                int opa = stack.popInteger();
-                int opb = stack.popInteger();
-                boolean result = opa == opb;
-                stack.pushBoolean(result);
-            }
-        });
-        
-        integer.addOperation("addInteger", new InterpreterOperation() {
-            @Override
-            public void call() {
-                logger.log(Level.FINE, "addInteger from IntegerClass is called.");
-                int opa = stack.popInteger();
-                int opb = stack.popInteger();
-                int result = opa + opb;
-                stack.pushInteger(result);
-            }
-        });
+        InterpreterClass integer = new IntegerClass();
 //        integer.addOperation("addReal", new InterpreterOperation() {
 //            @Override
 //            public void call() {                
@@ -574,5 +543,8 @@ public class CaesarInterpreter implements TreeVisitor {
         if(result != null) return result;
         throw new Exception("Unknown class " + t.getType());
     }
-    
+
+    public InterpreterStack getStack() {
+        return stack;
+    }
 }

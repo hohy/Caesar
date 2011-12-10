@@ -4,5 +4,5 @@ package caesar.interpreter;
  * @author hohy
  */
 public interface InterpreterOperation {
-    public void call();
+    public void call(CaesarInterpreter interpreter);
 }

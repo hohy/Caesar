@@ -297,7 +297,7 @@ public class Caesar implements CaesarConstants {
      vars.add(var);
         break;
       case DEF:
-        mth = MethodDefinition();
+        mth = MethodDefinition(className);
      methods.add(mth);
         break;
       default:
@@ -311,7 +311,7 @@ public class Caesar implements CaesarConstants {
     throw new Error("Missing return statement in function");
   }
 
-  static final public MethodDefinitionTree MethodDefinition() throws ParseException {
+  static final public MethodDefinitionTree MethodDefinition(IdentifierTree cls) throws ParseException {
     IdentifierTree returnType;
     IdentifierTree methodName;
     CommandListTree cmnds;
@@ -321,7 +321,7 @@ public class Caesar implements CaesarConstants {
     jj_consume_token(COLON);
     cmnds = CommandList();
     jj_consume_token(ENDDEF);
-   {if (true) return new MethodDefinitionTree(returnType, methodName, cmnds);}
+   {if (true) return new MethodDefinitionTree(cls, returnType, methodName, cmnds);}
     throw new Error("Missing return statement in function");
   }
 

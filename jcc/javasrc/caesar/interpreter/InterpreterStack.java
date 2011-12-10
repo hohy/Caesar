@@ -21,7 +21,7 @@ public class InterpreterStack {
         return InterpreterStackHolder.INSTANCE;
     }
 
-    int popInteger() {        
+    public int popInteger() {
         byte[] data = new byte[4];
         for (int i = 0; i < data.length; i++) {
             data[i] = stack.pop();            
@@ -31,7 +31,7 @@ public class InterpreterStack {
         return result;
     }
     
-    double popDouble() {        
+    public double popDouble() {
         byte[] data = new byte[8];
         for (int i = 0; i < data.length; i++) {
             data[i] = stack.pop();            
@@ -41,7 +41,7 @@ public class InterpreterStack {
         return result;
     }  
     
-    String popString() {        
+    public String popString() {
         int length = popInteger();
         byte[] data = new byte[length];
         for (int i = 0; i < data.length; i++) {
@@ -52,7 +52,7 @@ public class InterpreterStack {
         return result;
     }
     
-    Boolean popBoolean() {
+    public Boolean popBoolean() {
         byte[] data = new byte[1];
         for (int i = 0; i < data.length; i++) {
             data[i] = stack.pop();            
@@ -62,19 +62,19 @@ public class InterpreterStack {
         return result;
     }
 
-    void pushInteger(int value) {
+    public void pushInteger(int value) {
         logger.log(Level.FINEST, "Push to stack {0} integer.", value);
         byte[] data = ByteConvertor.toByta(value);
         this.push(data);
     }
 
-    void pushDouble(Double value) {
+    public void pushDouble(Double value) {
         logger.log(Level.FINEST, "Push to stack {0} double.", value);
         byte[] data = ByteConvertor.toByta(value);
         this.push(data);
     }
 
-    void pushString(String string) {
+    public void pushString(String string) {
         logger.log(Level.FINEST, "Push to stack {0} string.", string);
         byte[] strdata = ByteConvertor.toByta(string);
         byte[] length = ByteConvertor.toByta(string.length());
@@ -84,7 +84,7 @@ public class InterpreterStack {
         this.push(data);
     }
 
-    void pushBoolean(boolean value) {
+    public void pushBoolean(boolean value) {
         logger.log(Level.FINEST, "Push to stack {0} double.", value);
         byte[] data = ByteConvertor.toByta(value);
         this.push(data);
@@ -101,7 +101,7 @@ public class InterpreterStack {
         return stack.peek();
     }
     
-    byte[] pop(int objectSize) {
+    public byte[] pop(int objectSize) {
         logger.log(Level.FINEST, "Pop from stack {0} bytes. Current stack size: {1}", new Object[]{stack.peek(), stack.size() - objectSize});
         byte[] result = new byte[objectSize];
         for (int i = 0; i < result.length; i++) {

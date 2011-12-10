@@ -41,14 +41,14 @@ public class InterpreterClass {
         fieldsTable.put(name, new InterpreterClassField(name, type, initTree, size));
         size += 4;
     }
-    
-    public void callOperation(String name, InterpreterObject ... params) {
+
+    public void callOperation(CaesarInterpreter interpreter, String name, InterpreterObject ... params) {
         InterpreterOperation op = vtable.get(name);
 
         for (int i = 0; i < params.length; i++) {                
             //InterpreterStack.getInstance().push(params[i]);
         }
-        if(op != null) op.call();
+        if(op != null) op.call(interpreter);
         else {
             Logger.getLogger(InterpreterClass.class.getCanonicalName()).log(Level.SEVERE, "{0}: Calling unknown method {1}", new Object[]{this.getName(), name});
         }
