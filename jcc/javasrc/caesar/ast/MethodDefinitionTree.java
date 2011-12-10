@@ -6,11 +6,13 @@ package caesar.ast;
  */
 public class MethodDefinitionTree extends CommandTree {
 
+    IdentifierTree className;
     IdentifierTree returnType;
     IdentifierTree name;
     CommandListTree commands;
 
-    public MethodDefinitionTree(IdentifierTree returnType, IdentifierTree name, CommandListTree commands) {
+    public MethodDefinitionTree(IdentifierTree className, IdentifierTree returnType, IdentifierTree name, CommandListTree commands) {
+        this.className = className;
         this.returnType = returnType;
         this.name = name;
         this.commands = commands;
@@ -33,4 +35,7 @@ public class MethodDefinitionTree extends CommandTree {
         return returnType;
     }
 
+    public IdentifierTree getClassName() {
+        return className;
+    }
 }
