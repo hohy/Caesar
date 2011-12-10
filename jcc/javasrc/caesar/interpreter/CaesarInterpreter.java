@@ -24,7 +24,7 @@ public class CaesarInterpreter implements TreeVisitor {
     
 
     /**
-     * Interprete program. Init enviroment.
+     * Interprete program. Init environment.
      */
     @Override
     public void visit(ProgramTree t) {       
@@ -59,7 +59,9 @@ public class CaesarInterpreter implements TreeVisitor {
                 // zasobnik dostala, tak musim interpretovat ExpressionTree ktery
                 // hodnotu vypocita.
                 byte[] object = new byte[cls.getObjectSize()];
-                int i = 0;                
+                int i = 0;
+                // environment pro nove vytvareny objekt
+                InterpreterEnvironment objectEnv = new InterpreterEnvironment(currentEnv);
                 for(InterpreterClassField field : cls.getFields()) {                    
                     // interpret init tree
                     field.getInitTree().accept(this);
@@ -88,6 +90,10 @@ public class CaesarInterpreter implements TreeVisitor {
                     i++;
                     // a dam na spravne misto do objektu.
                     System.arraycopy(data, 0, object, offset, data.length);
+
+                    // a do environmentu daneho objektu
+                    InterpreterObject fieldObject = new InterpreterObject(pointer, field.getType());
+                    objectEnv.add(field.getName(), fieldObject);
                 }
                 // vysledek dame na zasobnik
                 stack.push(object);
@@ -108,7 +114,6 @@ public class CaesarInterpreter implements TreeVisitor {
                 System.arraycopy(strdata, 0, data, 4, strdata.length);                 
                 pointer = heap.store(data);
             }
-                        
             currentEnv.add(varName, new InterpreterObject(pointer, cls));
             logger.log(Level.FINEST, "Created new variable {0} of class {1} ObjSize: {2} Pointer: {3}", new Object[]{varName, cls.getName(), cls.getObjectSize(), pointer});
         } catch (Exception ex) {
