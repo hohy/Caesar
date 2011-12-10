@@ -1,21 +1,6 @@
 package caesar;
 
-import caesar.ast.AssignVariableTree;
-import caesar.ast.BinaryTree;
-import caesar.ast.ClassDefinitionTree;
-import caesar.ast.ClassIdentifierTree;
-import caesar.ast.ClassMethodIdentifierTree;
-import caesar.ast.CommandListTree;
-import caesar.ast.CommandTree;
-import caesar.ast.CreateVariableTree;
-import caesar.ast.FieldIdentifierTree;
-import caesar.ast.IfTree;
-import caesar.ast.LiteralTree;
-import caesar.ast.MethodDefinitionTree;
-import caesar.ast.MethodIdentifierTree;
-import caesar.ast.PrintlnTree;
-import caesar.ast.ProgramTree;
-import caesar.ast.TreeVisitor;
+import caesar.ast.*;
 
 
 public class DumpCaesarVisitor implements TreeVisitor {
@@ -156,6 +141,10 @@ public class DumpCaesarVisitor implements TreeVisitor {
         t.getCommands().accept(this);
     }
 
-    
-    
+    @Override
+    public void visit(MethodCallTree methodCallTree) {
+        System.out.println(getSpaces() + "Method call " + methodCallTree.toString());
+    }
+
+
 }

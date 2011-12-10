@@ -87,40 +87,64 @@ public class Caesar implements CaesarConstants {
 }*/
   static final public CommandTree Command() throws ParseException {
   CommandTree c;
+  Token firstIdent;
+  Token secondIdent = null;
+  ExpressionTree e;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VAR:
       c = CreateVariableCmd();
                            {if (true) return c;}
       break;
-    default:
-      jj_la1[1] = jj_gen;
-      if (jj_2_1(2)) {
-        c = AssignVariableCmd();
-                                          {if (true) return c;}
-      } else {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case IF:
-          c = IfCmd();
+    case IF:
+      c = IfCmd();
                 {if (true) return c;}
-          break;
-        case WHILE:
-          c = WhileCmd();
+      break;
+    case WHILE:
+      c = WhileCmd();
                    {if (true) return c;}
-          break;
-        case PRINTLN:
-          c = PrintlnCmd();
+      break;
+    case PRINTLN:
+      c = PrintlnCmd();
                       {if (true) return c;}
-          break;
-        case CLASS:
-          c = ClassDefinition();
+      break;
+    case CLASS:
+      c = ClassDefinition();
                            {if (true) return c;}
-          break;
-        default:
-          jj_la1[2] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+      break;
+    case IDENT:
+      firstIdent = jj_consume_token(IDENT);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case DOT:
+        jj_consume_token(DOT);
+        secondIdent = jj_consume_token(IDENT);
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        ;
       }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case ASSIGN:
+        jj_consume_token(ASSIGN);
+        e = Expression();
+        IdentifierTree id = secondIdent == null ? new FieldIdentifierTree(firstIdent.image) : new ClassIdentifierTree(firstIdent.image, secondIdent.image);
+        {if (true) return new AssignVariableTree(id, e);}
+        break;
+      case LBRC:
+        jj_consume_token(LBRC);
+        jj_consume_token(RBRC);
+       if(secondIdent == null) {if (true) return new MethodCallTree(new FieldIdentifierTree(firstIdent.image));}
+       else {if (true) return new MethodCallTree(new ClassIdentifierTree(firstIdent.image, secondIdent.image));}
+        break;
+      default:
+        jj_la1[2] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      break;
+    default:
+      jj_la1[3] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
@@ -151,7 +175,7 @@ public class Caesar implements CaesarConstants {
       jj_consume_token(RBRC);
       break;
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -197,7 +221,7 @@ public class Caesar implements CaesarConstants {
       jj_consume_token(ENDIF);
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -244,7 +268,7 @@ public class Caesar implements CaesarConstants {
           {if (true) return Operator.GE;}
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -288,7 +312,7 @@ public class Caesar implements CaesarConstants {
         ;
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         break label_2;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -301,7 +325,7 @@ public class Caesar implements CaesarConstants {
      methods.add(mth);
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[8] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -325,22 +349,20 @@ public class Caesar implements CaesarConstants {
     throw new Error("Missing return statement in function");
   }
 
-/*
-MethodCallTree MethodCall() : {
-  String objName;
+/*MethodCallTree MethodCall() : {
+  Token objName;
   IdentifierTree i;
-  String methodName;
+  Token methodName;
   IdentifierTree m;
 }
 {
-  objName = Identifier() <DOT> methodName = Identifier() <LBRC> <RBRC>
+  objName = <IDENT> <DOT> methodName = <IDENT> <LBRC> <RBRC>
   {
-    i = new IdentifierTree(objName);
-    m = new IdentifierTree(methodName);
+    i = new FieldIdentifierTree(objName.image);
+    m = new MethodIdentifierTree(methodName.image);
     return new MethodCallTree(i, m);
   }
-}
-*/
+}*/
   static final public ExpressionTree Expression() throws ParseException {
   ExpressionTree t;
   ExpressionTree r;
@@ -376,13 +398,13 @@ MethodCallTree MethodCall() : {
      {if (true) return r;}
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[10] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -424,13 +446,13 @@ MethodCallTree MethodCall() : {
     {if (true) return r;}
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -467,7 +489,7 @@ MethodCallTree MethodCall() : {
      {if (true) return l;}
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -485,7 +507,7 @@ MethodCallTree MethodCall() : {
       {if (true) return new FieldIdentifierTree(n, e);}
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[14] = jj_gen;
       ;
     }
      {if (true) return new FieldIdentifierTree(n);}
@@ -513,13 +535,13 @@ MethodCallTree MethodCall() : {
       {if (true) return new MethodIdentifierTree(t.image);}
         break;
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[15] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
     it = new FieldIdentifierTree(t.image);
@@ -539,7 +561,7 @@ MethodCallTree MethodCall() : {
       {if (true) return it;}
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       ;
     }
     it = new ClassIdentifierTree(t.image, tt.image);
@@ -569,52 +591,6 @@ MethodCallTree MethodCall() : {
     throw new Error("Missing return statement in function");
   }
 
-  static private boolean jj_2_1(int xla) {
-    jj_la = xla; jj_lastpos = jj_scanpos = token;
-    try { return !jj_3_1(); }
-    catch(LookaheadSuccess ls) { return true; }
-    finally { jj_save(0, xla); }
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_scan_token(LBRC)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_5() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_6()) {
-    jj_scanpos = xsp;
-    if (jj_3R_7()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_4() {
-    if (jj_scan_token(IDENT)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_5()) jj_scanpos = xsp;
-    return false;
-  }
-
   static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
   static public CaesarTokenManager token_source;
@@ -624,10 +600,8 @@ MethodCallTree MethodCall() : {
   /** Next token. */
   static public Token jj_nt;
   static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
-  static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[17];
+  static final private int[] jj_la1 = new int[18];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -635,14 +609,11 @@ MethodCallTree MethodCall() : {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x40c128,0x8,0xc120,0x10480000,0xc0,0x0,0x20008,0x20008,0x3000000,0x3000000,0xc000000,0xc000000,0x10400000,0x40000000,0x10000000,0x10000000,0x10000000,};
+      jj_la1_0 = new int[] {0x40c128,0x0,0x10800000,0x40c128,0x10480000,0xc0,0x0,0x20008,0x20008,0x3000000,0x3000000,0xc000000,0xc000000,0x10400000,0x40000000,0x10000000,0x10000000,0x10000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x380,0x0,0x3f,0x0,0x0,0x0,0x0,0x0,0x0,0x380,0x0,0x40,0x40,0x0,};
+      jj_la1_1 = new int[] {0x0,0x40,0x0,0x0,0x380,0x0,0x3f,0x0,0x0,0x0,0x0,0x0,0x0,0x380,0x0,0x40,0x40,0x0,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
-  static private boolean jj_rescan = false;
-  static private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public Caesar(java.io.InputStream stream) {
@@ -662,8 +633,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -677,8 +647,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -695,8 +664,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -706,8 +674,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -723,8 +690,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -733,8 +699,7 @@ MethodCallTree MethodCall() : {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -744,44 +709,11 @@ MethodCallTree MethodCall() : {
     jj_ntk = -1;
     if (token.kind == kind) {
       jj_gen++;
-      if (++jj_gc > 100) {
-        jj_gc = 0;
-        for (int i = 0; i < jj_2_rtns.length; i++) {
-          JJCalls c = jj_2_rtns[i];
-          while (c != null) {
-            if (c.gen < jj_gen) c.first = null;
-            c = c.next;
-          }
-        }
-      }
       return token;
     }
     token = oldToken;
     jj_kind = kind;
     throw generateParseException();
-  }
-
-  static private final class LookaheadSuccess extends java.lang.Error { }
-  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static private boolean jj_scan_token(int kind) {
-    if (jj_scanpos == jj_lastpos) {
-      jj_la--;
-      if (jj_scanpos.next == null) {
-        jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
-      } else {
-        jj_lastpos = jj_scanpos = jj_scanpos.next;
-      }
-    } else {
-      jj_scanpos = jj_scanpos.next;
-    }
-    if (jj_rescan) {
-      int i = 0; Token tok = token;
-      while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
-      if (tok != null) jj_add_error_token(kind, i);
-    }
-    if (jj_scanpos.kind != kind) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
-    return false;
   }
 
 
@@ -814,33 +746,6 @@ MethodCallTree MethodCall() : {
   static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   static private int[] jj_expentry;
   static private int jj_kind = -1;
-  static private int[] jj_lasttokens = new int[100];
-  static private int jj_endpos;
-
-  static private void jj_add_error_token(int kind, int pos) {
-    if (pos >= 100) return;
-    if (pos == jj_endpos + 1) {
-      jj_lasttokens[jj_endpos++] = kind;
-    } else if (jj_endpos != 0) {
-      jj_expentry = new int[jj_endpos];
-      for (int i = 0; i < jj_endpos; i++) {
-        jj_expentry[i] = jj_lasttokens[i];
-      }
-      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
-        int[] oldentry = (int[])(it.next());
-        if (oldentry.length == jj_expentry.length) {
-          for (int i = 0; i < jj_expentry.length; i++) {
-            if (oldentry[i] != jj_expentry[i]) {
-              continue jj_entries_loop;
-            }
-          }
-          jj_expentries.add(jj_expentry);
-          break jj_entries_loop;
-        }
-      }
-      if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
-    }
-  }
 
   /** Generate ParseException. */
   static public ParseException generateParseException() {
@@ -850,7 +755,7 @@ MethodCallTree MethodCall() : {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 18; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -869,9 +774,6 @@ MethodCallTree MethodCall() : {
         jj_expentries.add(jj_expentry);
       }
     }
-    jj_endpos = 0;
-    jj_rescan_token();
-    jj_add_error_token(0, 0);
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
       exptokseq[i] = jj_expentries.get(i);
@@ -885,41 +787,6 @@ MethodCallTree MethodCall() : {
 
   /** Disable tracing. */
   static final public void disable_tracing() {
-  }
-
-  static private void jj_rescan_token() {
-    jj_rescan = true;
-    for (int i = 0; i < 1; i++) {
-    try {
-      JJCalls p = jj_2_rtns[i];
-      do {
-        if (p.gen > jj_gen) {
-          jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
-          switch (i) {
-            case 0: jj_3_1(); break;
-          }
-        }
-        p = p.next;
-      } while (p != null);
-      } catch(LookaheadSuccess ls) { }
-    }
-    jj_rescan = false;
-  }
-
-  static private void jj_save(int index, int xla) {
-    JJCalls p = jj_2_rtns[index];
-    while (p.gen > jj_gen) {
-      if (p.next == null) { p = p.next = new JJCalls(); break; }
-      p = p.next;
-    }
-    p.gen = jj_gen + xla - jj_la; p.first = token; p.arg = xla;
-  }
-
-  static final class JJCalls {
-    int gen;
-    Token first;
-    int arg;
-    JJCalls next;
   }
 
   }

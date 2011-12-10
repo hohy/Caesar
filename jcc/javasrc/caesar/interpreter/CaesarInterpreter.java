@@ -319,7 +319,11 @@ public class CaesarInterpreter implements TreeVisitor {
             } catch (Exception ex) {
                 Logger.getLogger(CaesarInterpreter.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }        
+        }
+        for(MethodDefinitionTree mth : t.getMethods()) {
+            InterpreterOperation operation = new InterpreterMethod(mth);
+            cls.addOperation(mth.getName().getName(), operation);
+        }
         logger.fine(cls.toString());
     }
 
@@ -329,12 +333,19 @@ public class CaesarInterpreter implements TreeVisitor {
             InterpreterClass cls = getClass(t.getClassName().getName());
             InterpreterOperation operation = new InterpreterMethod(t);
             cls.addOperation(t.getName().getName(), operation);
+            logger.finer("Adding new method " + t.getName() + " to class " + cls.getName());
         } catch (Exception e) {
             logger.finest("Unknown class " + t.getClassName().getName());
         }
-        throw new UnsupportedOperationException("Not supported yet.");
-    }    
-    
+    }
+
+    @Override
+    public void visit(MethodCallTree t) {
+        InterpreterObject obj = currentEnv.searchEnv(t.getObjName());
+        //obj.getType().callOperation(this, t.getMethodName());
+        classTable.get(obj.getType().getName()).callOperation(this, t.getMethodName());
+    }
+
 //    @Override
 //    public void visit(MethodCallTree t) {
 //        String objName = t.getObjectIdentifier().getName();

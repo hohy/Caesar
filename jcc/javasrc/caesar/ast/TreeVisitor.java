@@ -35,4 +35,6 @@ public interface TreeVisitor {
     public void visit(FieldIdentifierTree aThis);
     
     public void visit(MethodDefinitionTree aThis);
+
+    public void visit(MethodCallTree methodCallTree);
 }
