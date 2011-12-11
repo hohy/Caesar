@@ -6,10 +6,12 @@ package caesar.interpreter;
 public class InterpreterObject {
     private int dataPointer;
     private InterpreterClass type;
+    private InterpreterEnvironment environment;
 
-    public InterpreterObject(int dataPointer, InterpreterClass type) {
+    public InterpreterObject(int dataPointer, InterpreterClass type, InterpreterEnvironment objectEnv) {
         this.dataPointer = dataPointer;
         this.type = type;
+        this.environment = objectEnv;
     }
     
     public InterpreterClass getType() {
@@ -26,6 +28,10 @@ public class InterpreterObject {
 
     public void setDataPointer(int dataPointer) {
         this.dataPointer = dataPointer;
+    }
+
+    public InterpreterEnvironment getEnvironment() {
+        return environment;
     }
 
     @Override

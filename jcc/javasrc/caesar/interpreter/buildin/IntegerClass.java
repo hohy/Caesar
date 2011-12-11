@@ -1,9 +1,13 @@
 package caesar.interpreter.buildin;
 
+import caesar.ast.MethodParam;
 import caesar.interpreter.CaesarInterpreter;
+import caesar.interpreter.Heap;
 import caesar.interpreter.InterpreterClass;
 import caesar.interpreter.InterpreterOperation;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +31,13 @@ public class IntegerClass extends InterpreterClass {
                 boolean result = opa == opb;
                 interpreter.getStack().pushBoolean(result);
             }
+
+            @Override
+            public List<MethodParam> getParams() {
+                List<MethodParam> params = new LinkedList<MethodParam>();
+                params.add(new MethodParam("x", "Integer"));
+                return params;
+            }
         });
 
         addOperation("addInteger", new InterpreterOperation() {
@@ -37,6 +48,14 @@ public class IntegerClass extends InterpreterClass {
                 int opb = interpreter.getStack().popInteger();
                 int result = opa + opb;
                 interpreter.getStack().pushInteger(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                List<MethodParam> params = new LinkedList<MethodParam>();
+                params.add(new MethodParam("x", "Integer"));
+                params.add(new MethodParam("y", "Integer"));
+                return params;
             }
         });
     }

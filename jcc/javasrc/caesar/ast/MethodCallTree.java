@@ -1,5 +1,7 @@
 package caesar.ast;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jan Hýbl
@@ -9,14 +11,17 @@ package caesar.ast;
 public class MethodCallTree extends CommandTree {
     String objName;
     String methodName;
+    List<ExpressionTree> paramsExpressions;
 
-    public MethodCallTree(ClassIdentifierTree ident) {
+    public MethodCallTree(ClassIdentifierTree ident, List<ExpressionTree> params) {
         this.objName = ident.getName();
         this.methodName = ident.getFldName();
+        this.paramsExpressions = params;
     }
 
-    public MethodCallTree(FieldIdentifierTree ident) {
+    public MethodCallTree(FieldIdentifierTree ident, List<ExpressionTree> params) {
         this.methodName = ident.getName();
+        this.paramsExpressions = params;
     }
 
     public MethodCallTree(String objName, String methodName) {
@@ -35,6 +40,10 @@ public class MethodCallTree extends CommandTree {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public List<ExpressionTree> getParamsExpressions() {
+        return paramsExpressions;
     }
 
     @Override

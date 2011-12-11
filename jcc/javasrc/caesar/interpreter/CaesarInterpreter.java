@@ -44,11 +44,17 @@ public class CaesarInterpreter implements TreeVisitor {
         }
     }
 
+    /**
+     * Prikaz pro vytvoreni nove promenne nebo instance nejake tridy.
+     * @param t
+     */
     @Override
     public void visit(CreateVariableTree t) {
         String varName = t.getIdentifier().getName();
         logger.log(Level.FINE, "Creating new variable {0} in enviroment.", varName);
         try {
+            // environment pro nove vytvareny objekt
+            InterpreterEnvironment objectEnv = new InterpreterEnvironment(currentEnv);
             InterpreterClass cls = getClass(t.getIdentifier());
             if(t.getExp() != null) { // null = vytvarime primitivni typ
                 t.getExp().accept(this);
@@ -60,8 +66,6 @@ public class CaesarInterpreter implements TreeVisitor {
                 // hodnotu vypocita.
                 byte[] object = new byte[cls.getObjectSize()];
                 int i = 0;
-                // environment pro nove vytvareny objekt
-                InterpreterEnvironment objectEnv = new InterpreterEnvironment(currentEnv);
                 for(InterpreterClassField field : cls.getFields()) {                    
                     // interpret init tree
                     field.getInitTree().accept(this);
@@ -92,7 +96,7 @@ public class CaesarInterpreter implements TreeVisitor {
                     System.arraycopy(data, 0, object, offset, data.length);
 
                     // a do environmentu daneho objektu
-                    InterpreterObject fieldObject = new InterpreterObject(pointer, field.getType());
+                    InterpreterObject fieldObject = new InterpreterObject(pointer, field.getType(), objectEnv);
                     objectEnv.add(field.getName(), fieldObject);
                 }
                 // vysledek dame na zasobnik
@@ -100,8 +104,8 @@ public class CaesarInterpreter implements TreeVisitor {
             }            
             int varSize = cls.getObjectSize();
             logger.log(Level.FINEST, "Variable {0} has size {1}", new Object[]{varName, varSize});
-            byte[] data;
-            int pointer;
+            byte[] data;   // inicializacni data objektu. Ta budou ulozena na heape
+            int pointer;   // ukazatel, kde na heape je objekt ulozen
             if(varSize != -1) {
                 data = stack.pop(cls.getObjectSize());
                 pointer = heap.store(data);
@@ -114,7 +118,8 @@ public class CaesarInterpreter implements TreeVisitor {
                 System.arraycopy(strdata, 0, data, 4, strdata.length);                 
                 pointer = heap.store(data);
             }
-            currentEnv.add(varName, new InterpreterObject(pointer, cls));
+            objectEnv.add("this", new InterpreterObject(pointer, cls, null));
+            currentEnv.add(varName, new InterpreterObject(pointer, cls, objectEnv));    // hotovy objekt si pridam do environmentu
             logger.log(Level.FINEST, "Created new variable {0} of class {1} ObjSize: {2} Pointer: {3}", new Object[]{varName, cls.getName(), cls.getObjectSize(), pointer});
         } catch (Exception ex) {
             Logger.getLogger(CaesarInterpreter.class.getName()).log(Level.SEVERE, null, ex);
@@ -192,13 +197,13 @@ public class CaesarInterpreter implements TreeVisitor {
             InterpreterClass rightOp = getClass(t.getRightOperand());        
             switch(op) {
                 case PLUS: 
-                    leftOp.callOperation(this, "add" + rightOp.getName());
+                    leftOp.callOperation(this, "add" + rightOp.getName(), currentEnv);
                     break;
-                case MINUS: leftOp.callOperation(this, "substract" + rightOp.getName()); break;
-                case MULTIPLY: leftOp.callOperation(this, "multiply" + rightOp.getName());; break;
-                case DIVIDE: leftOp.callOperation(this, "divide" + rightOp.getName()); break;
+                case MINUS: leftOp.callOperation(this, "substract" + rightOp.getName(), currentEnv); break;
+                case MULTIPLY: leftOp.callOperation(this, "multiply" + rightOp.getName(), currentEnv); break;
+                case DIVIDE: leftOp.callOperation(this, "divide" + rightOp.getName(), currentEnv); break;
                 case EQ:
-                    leftOp.callOperation(this, "equals");
+                    leftOp.callOperation(this, "equals", currentEnv);
     //                InterpreterObject opb = stack.pop();
     //                InterpreterObject opa = stack.pop();
     //                opa.getType().callOperation("equals", opb);
@@ -318,7 +323,7 @@ public class CaesarInterpreter implements TreeVisitor {
         for(CreateVariableTree var : t.getVars()) {
             try {
                 String varName = var.getIdentifier().getName();                
-                InterpreterClass type = getClass(var.getIdentifier().getType());                
+                InterpreterClass type = getInterpreterClass(var.getIdentifier().getType());
                 logger.finer("Adding new " + type.getName() + " field " + varName + " to class " + cls.getName());
                 cls.addField(varName, type, var.getExp());
             } catch (Exception ex) {
@@ -335,7 +340,7 @@ public class CaesarInterpreter implements TreeVisitor {
     @Override
     public void visit(MethodDefinitionTree t) {
         try {
-            InterpreterClass cls = getClass(t.getClassName().getName());
+            InterpreterClass cls = getInterpreterClass(t.getClassName().getName());
             InterpreterOperation operation = new InterpreterMethod(t);
             cls.addOperation(t.getName().getName(), operation);
             logger.finer("Adding new method " + t.getName() + " to class " + cls.getName());
@@ -346,9 +351,13 @@ public class CaesarInterpreter implements TreeVisitor {
 
     @Override
     public void visit(MethodCallTree t) {
+        logger.finer("Calling method " + t.getMethodName() + " on object " + t.getObjName());
         InterpreterObject obj = currentEnv.searchEnv(t.getObjName());
-        //obj.getType().callOperation(this, t.getMethodName());
-        classTable.get(obj.getType().getName()).callOperation(this, t.getMethodName());
+        try {
+            getInterpreterClass(obj.getType().getName()).callOperation(this, t.getMethodName(), t.getParamsExpressions(), obj.getEnvironment());
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }        
     }
 
 //    @Override
@@ -547,7 +556,7 @@ public class CaesarInterpreter implements TreeVisitor {
         }
     }
 
-    private InterpreterClass getClass(String name) throws Exception {
+    public InterpreterClass getInterpreterClass(String name) throws Exception {
         InterpreterClass result = classTable.get(name);
         if(result != null) return result;
         throw new Exception("Unknown class " + name);
@@ -562,5 +571,17 @@ public class CaesarInterpreter implements TreeVisitor {
 
     public InterpreterStack getStack() {
         return stack;
+    }
+
+    public Heap getHeap() {
+        return heap;
+    }
+
+    public InterpreterEnvironment getCurrentEnv() {
+        return currentEnv;
+    }
+
+    public void setCurrentEnv(InterpreterEnvironment currentEnv) {
+        this.currentEnv = currentEnv;
     }
 }

@@ -137,6 +137,12 @@ public class DumpCaesarVisitor implements TreeVisitor {
         stackDepth++;
         System.out.println(getSpaces() + "Return Type:");
         t.getReturnType().accept(this);
+        System.out.println(getSpaces() + "Parameters:");
+        stackDepth++;
+        for(MethodParam param : t.getParams()) {
+            System.out.println(getSpaces() + param.getClassName() + " " + param.getName());
+        }
+        stackDepth--;
         System.out.println(getSpaces() + "Body:");
         t.getCommands().accept(this);
     }
@@ -144,6 +150,12 @@ public class DumpCaesarVisitor implements TreeVisitor {
     @Override
     public void visit(MethodCallTree methodCallTree) {
         System.out.println(getSpaces() + "Method call " + methodCallTree.toString());
+        stackDepth++;
+        System.out.println(getSpaces() + "Params:");
+        for(ExpressionTree exp: methodCallTree.getParamsExpressions()) {
+            exp.accept(this);
+        }
+        stackDepth--;
     }
 
 
