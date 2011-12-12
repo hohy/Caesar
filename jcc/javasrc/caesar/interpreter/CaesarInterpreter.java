@@ -55,15 +55,17 @@ public class CaesarInterpreter implements TreeVisitor {
         try {
             // environment pro nove vytvareny objekt
             InterpreterEnvironment objectEnv = new InterpreterEnvironment(currentEnv);
-            InterpreterClass cls = getClass(t.getIdentifier());
+            InterpreterClass cls;
             if(t.getExp() != null) { // null = vytvarime primitivni typ
                 t.getExp().accept(this);
+                cls = getClass(t.getExp());
             } else {    // vytvarime novy objekt
                 // pro kazdy field z objektu musime najit misto na halde
                 // Kazdy field bude take potreba inicializova a nahrat do nej 
                 // inicializacni hodnotu. Ta by mela byt na zasobniku. Aby se na
                 // zasobnik dostala, tak musim interpretovat ExpressionTree ktery
                 // hodnotu vypocita.
+                cls = getClass(t.getIdentifier());
                 byte[] object = new byte[cls.getObjectSize()];
                 int i = 0;
                 for(InterpreterClassField field : cls.getFields()) {                    

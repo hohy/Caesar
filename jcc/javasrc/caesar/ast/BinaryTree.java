@@ -59,9 +59,13 @@ public class BinaryTree extends ExpressionTree {
 //        if(lo == Type.ARRAY) lo = Type.INTEGER;
 //        if(ro == Type.ARRAY) ro = Type.INTEGER;
 
-        if (lo.equals("Integer") && ro.equals("Integer")) {
+        // pokud nevim typ nektereho operandu, tak nemuzu urcovat typ vysledku...
+        if(lo == null || ro == null) return null;
+        
+        if ((lo != null) && (ro != null) && (lo.equals("Integer") && ro.equals("Integer"))) {
             return "Integer";
         }
-        return "Integer";
+
+        return null;
     }
 }
