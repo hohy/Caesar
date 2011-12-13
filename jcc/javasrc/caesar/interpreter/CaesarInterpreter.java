@@ -21,6 +21,7 @@ public class CaesarInterpreter implements TreeVisitor {
     private String currentIdentifier;
     private InterpreterStack stack;
     private Heap heap;
+    private Boolean returnFlag = false;
     
 
     /**
@@ -41,6 +42,10 @@ public class CaesarInterpreter implements TreeVisitor {
     public void visit(CommandListTree t) {
         for(CommandTree command : t.getCommands()) {
             command.accept(this);
+            if(command instanceof ReturnTree) {
+                setReturnFlag();
+            }
+            if(returnFlag) break;
         }
     }
 
@@ -283,7 +288,10 @@ public class CaesarInterpreter implements TreeVisitor {
 
     @Override
     public void visit(ClassMethodIdentifierTree t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ClassIdentifierTree it = new ClassIdentifierTree(t.getName(), t.getMethodName());
+        MethodCallTree mct = new MethodCallTree(it, t.getParams());
+        mct.accept(this);
+        t.setType(mct.getReturnType());
     }
     
     @Override
@@ -355,14 +363,26 @@ public class CaesarInterpreter implements TreeVisitor {
     public void visit(MethodCallTree t) {
         logger.finer("Calling method " + t.getMethodName() + " on object " + t.getObjName());
         InterpreterObject obj = currentEnv.searchEnv(t.getObjName());
+
         try {
-            getInterpreterClass(obj.getType().getName()).callOperation(this, t.getMethodName(), t.getParamsExpressions(), obj.getEnvironment());
+            String returnType = getInterpreterClass(obj.getType().getName()).callOperation(this, t.getMethodName(), t.getParamsExpressions(), obj.getEnvironment());
+            t.setReturnType(returnType);
+            clearReturnFlag();
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }        
+        }
     }
 
-//    @Override
+    @Override
+    public void visit(ReturnTree t) {
+        logger.finest("Returning from method");
+        // if method return result of some expression, interpret this expression.
+        // Result should be on top of the stack.
+        if(t.getExpression() != null) t.getExpression().accept(this);
+    }
+
+
+    //    @Override
 //    public void visit(MethodCallTree t) {
 //        String objName = t.getObjectIdentifier().getName();
 //        String mName = t.getMethodIdentifier().getName();
@@ -585,5 +605,17 @@ public class CaesarInterpreter implements TreeVisitor {
 
     public void setCurrentEnv(InterpreterEnvironment currentEnv) {
         this.currentEnv = currentEnv;
+    }
+
+    public Boolean getReturnFlag() {
+        return returnFlag;
+    }
+
+    public void setReturnFlag() {
+        this.returnFlag = true;
+    }
+
+    public void clearReturnFlag() {
+        this.returnFlag = false;
     }
 }

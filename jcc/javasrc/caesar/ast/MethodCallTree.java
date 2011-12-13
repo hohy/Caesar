@@ -12,6 +12,7 @@ public class MethodCallTree extends CommandTree {
     String objName;
     String methodName;
     List<ExpressionTree> paramsExpressions;
+    private String returnType;
 
     public MethodCallTree(ClassIdentifierTree ident, List<ExpressionTree> params) {
         this.objName = ident.getName();
@@ -49,5 +50,13 @@ public class MethodCallTree extends CommandTree {
     @Override
     public String toString() {
         return objName + "." + methodName;
+    }
+
+    public String getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
     }
 }

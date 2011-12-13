@@ -73,6 +73,7 @@ public class Caesar implements CaesarConstants {
       case WHILE:
       case PRINTLN:
       case CLASS:
+      case RETURN:
       case IDENT:
         ;
         break;
@@ -118,6 +119,10 @@ public class Caesar implements CaesarConstants {
     case PRINTLN:
       c = PrintlnCmd();
                       {if (true) return c;}
+      break;
+    case RETURN:
+      c = ReturnCmd();
+                     {if (true) return c;}
       break;
     case CLASS:
       c = ClassDefinition();
@@ -350,6 +355,25 @@ public class Caesar implements CaesarConstants {
     throw new Error("Missing return statement in function");
   }
 
+  static final public ReturnTree ReturnCmd() throws ParseException {
+  ExpressionTree e = null;
+    jj_consume_token(RETURN);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case IDENT:
+    case LBRC:
+    case QUOTEDSTRING:
+    case REAL_CONST:
+    case INT_CONST:
+      e = Expression();
+      break;
+    default:
+      jj_la1[10] = jj_gen;
+      ;
+    }
+   {if (true) return new ReturnTree(e);}
+    throw new Error("Missing return statement in function");
+  }
+
   static final public ClassDefinitionTree ClassDefinition() throws ParseException {
   IdentifierTree className;
   List<CreateVariableTree> vars = new LinkedList<CreateVariableTree>();
@@ -367,7 +391,7 @@ public class Caesar implements CaesarConstants {
         ;
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -380,7 +404,7 @@ public class Caesar implements CaesarConstants {
      methods.add(mth);
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -417,7 +441,7 @@ public class Caesar implements CaesarConstants {
           jj_consume_token(RBRC);
           break;
         default:
-          jj_la1[12] = jj_gen;
+          jj_la1[13] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -426,7 +450,7 @@ public class Caesar implements CaesarConstants {
           ;
           break;
         default:
-          jj_la1[13] = jj_gen;
+          jj_la1[14] = jj_gen;
           break label_4;
         }
       }
@@ -435,7 +459,7 @@ public class Caesar implements CaesarConstants {
       jj_consume_token(RBRC);
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -504,13 +528,13 @@ public class Caesar implements CaesarConstants {
      {if (true) return r;}
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[16] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -552,13 +576,13 @@ public class Caesar implements CaesarConstants {
     {if (true) return r;}
         break;
       default:
-        jj_la1[17] = jj_gen;
+        jj_la1[18] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       ;
     }
    {if (true) return e1;}
@@ -595,7 +619,7 @@ public class Caesar implements CaesarConstants {
      {if (true) return l;}
       break;
     default:
-      jj_la1[19] = jj_gen;
+      jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -613,7 +637,7 @@ public class Caesar implements CaesarConstants {
       {if (true) return new FieldIdentifierTree(n, e);}
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       ;
     }
      {if (true) return new FieldIdentifierTree(n);}
@@ -641,13 +665,13 @@ public class Caesar implements CaesarConstants {
       {if (true) return new MethodIdentifierTree(t.image);}
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[23] = jj_gen;
       ;
     }
     it = new FieldIdentifierTree(t.image);
@@ -658,16 +682,61 @@ public class Caesar implements CaesarConstants {
   static final public IdentifierTree ClassIdentifier(Token t) throws ParseException {
   Token tt;
   IdentifierTree it;
+  ExpressionTree e;
+  List<ExpressionTree> params = new LinkedList<ExpressionTree>();
     tt = jj_consume_token(IDENT);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LBRC:
       jj_consume_token(LBRC);
-      jj_consume_token(RBRC);
-      it = new ClassMethodIdentifierTree(t.image, tt.image);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IDENT:
+      case LBRC:
+      case QUOTEDSTRING:
+      case REAL_CONST:
+      case INT_CONST:
+        label_5:
+        while (true) {
+          e = Expression();
+                          params.add(e);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case COMMA:
+            jj_consume_token(COMMA);
+            break;
+          case RBRC:
+            jj_consume_token(RBRC);
+            break;
+          default:
+            jj_la1[24] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case IDENT:
+          case LBRC:
+          case QUOTEDSTRING:
+          case REAL_CONST:
+          case INT_CONST:
+            ;
+            break;
+          default:
+            jj_la1[25] = jj_gen;
+            break label_5;
+          }
+        }
+        break;
+      case RBRC:
+        jj_consume_token(RBRC);
+        break;
+      default:
+        jj_la1[26] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      it = new ClassMethodIdentifierTree(t.image, tt.image, params);
       {if (true) return it;}
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[27] = jj_gen;
       ;
     }
     it = new ClassIdentifierTree(t.image, tt.image);
@@ -707,7 +776,7 @@ public class Caesar implements CaesarConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[24];
+  static final private int[] jj_la1 = new int[28];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -715,10 +784,10 @@ public class Caesar implements CaesarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x40c128,0x0,0x20200000,0x10400000,0x30400000,0x10800000,0x40c128,0x10480000,0xc0,0x0,0x20008,0x20008,0x20200000,0x400000,0x20400000,0x3000000,0x3000000,0xc000000,0xc000000,0x10400000,0x40000000,0x10000000,0x10000000,0x10000000,};
+      jj_la1_0 = new int[] {0x90c128,0x0,0x40400000,0x20800000,0x60800000,0x21000000,0x90c128,0x20880000,0xc0,0x0,0x20800000,0x20008,0x20008,0x40400000,0x800000,0x40800000,0x6000000,0x6000000,0x18000000,0x18000000,0x20800000,0x80000000,0x20000000,0x20000000,0x40400000,0x20800000,0x60800000,0x20000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x40,0x0,0x380,0x380,0x0,0x0,0x380,0x0,0x3f,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x380,0x0,0x40,0x40,0x0,};
+      jj_la1_1 = new int[] {0x0,0x80,0x0,0x700,0x700,0x0,0x0,0x700,0x0,0x7e,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x700,0x0,0x80,0x80,0x0,0x700,0x700,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -739,7 +808,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -753,7 +822,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -770,7 +839,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -780,7 +849,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -796,7 +865,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -805,7 +874,7 @@ public class Caesar implements CaesarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -856,12 +925,12 @@ public class Caesar implements CaesarConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[48];
+    boolean[] la1tokens = new boolean[49];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 24; i++) {
+    for (int i = 0; i < 28; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -873,7 +942,7 @@ public class Caesar implements CaesarConstants {
         }
       }
     }
-    for (int i = 0; i < 48; i++) {
+    for (int i = 0; i < 49; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

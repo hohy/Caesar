@@ -38,6 +38,11 @@ public class IntegerClass extends InterpreterClass {
                 params.add(new MethodParam("x", "Integer"));
                 return params;
             }
+
+            @Override
+            public String getReturnType() {
+                return "Boolean";
+            }
         });
 
         addOperation("addInteger", new InterpreterOperation() {
@@ -56,6 +61,11 @@ public class IntegerClass extends InterpreterClass {
                 params.add(new MethodParam("x", "Integer"));
                 params.add(new MethodParam("y", "Integer"));
                 return params;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Integer";
             }
         });
     }

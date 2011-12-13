@@ -158,5 +158,13 @@ public class DumpCaesarVisitor implements TreeVisitor {
         stackDepth--;
     }
 
+    @Override
+    public void visit(ReturnTree t) {
+        System.out.println(getSpaces() + "Return");
+        stackDepth++;
+        if(t.getExpression() != null) t.getExpression().accept(this);
+        stackDepth--;
+    }
+
 
 }

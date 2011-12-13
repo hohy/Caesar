@@ -48,7 +48,7 @@ public class InterpreterClass {
      * @param params        List parametru operace
      * @param environment   Environment ve kterem ma operace bezet
      */
-    public void callOperation(CaesarInterpreter interpreter, String name, List<ExpressionTree> params, InterpreterEnvironment environment) {
+    public String callOperation(CaesarInterpreter interpreter, String name, List<ExpressionTree> params, InterpreterEnvironment environment) {
         // najdeme se operaci v tabulce
         InterpreterOperation op = vtable.get(name);
 
@@ -93,6 +93,7 @@ public class InterpreterClass {
         }
         // nakonec nastavime zpet puvodni environment.
         interpreter.setCurrentEnv(oldEnv);
+        return op.getReturnType();
     }
     
     public void callOperation(CaesarInterpreter interpreter, String name, InterpreterEnvironment environment) {        

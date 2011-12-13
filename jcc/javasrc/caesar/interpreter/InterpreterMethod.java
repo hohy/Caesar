@@ -46,4 +46,9 @@ public class InterpreterMethod implements InterpreterOperation {
     public List<MethodParam> getParams() {
         return methodDefinition.getParams();
     }
+
+    @Override
+    public String getReturnType() {
+        return methodDefinition.getReturnType().getName();
+    }
 }

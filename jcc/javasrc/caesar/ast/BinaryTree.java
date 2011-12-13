@@ -65,7 +65,7 @@ public class BinaryTree extends ExpressionTree {
         if ((lo != null) && (ro != null) && (lo.equals("Integer") && ro.equals("Integer"))) {
             return "Integer";
         }
-
+        // TODO: dodelat dasi typy a operace...
         return null;
     }
 }

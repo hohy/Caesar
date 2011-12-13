@@ -37,4 +37,6 @@ public interface TreeVisitor {
     public void visit(MethodDefinitionTree aThis);
 
     public void visit(MethodCallTree methodCallTree);
+
+    public void visit(ReturnTree returnTree);
 }

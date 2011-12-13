@@ -11,4 +11,6 @@ import java.util.List;
 public interface InterpreterOperation {
     public void call(CaesarInterpreter interpreter);
     public List<MethodParam> getParams();
+
+    String getReturnType();
 }

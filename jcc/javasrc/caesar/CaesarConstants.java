@@ -49,53 +49,55 @@ public interface CaesarConstants {
   /** RegularExpression Id. */
   int NEW = 19;
   /** RegularExpression Id. */
-  int COLON = 20;
+  int RETURN = 20;
   /** RegularExpression Id. */
-  int COMMA = 21;
+  int COLON = 21;
   /** RegularExpression Id. */
-  int IDENT = 22;
+  int COMMA = 22;
   /** RegularExpression Id. */
-  int ASSIGN = 23;
+  int IDENT = 23;
   /** RegularExpression Id. */
-  int PLUS = 24;
+  int ASSIGN = 24;
   /** RegularExpression Id. */
-  int MINUS = 25;
+  int PLUS = 25;
   /** RegularExpression Id. */
-  int MULTIPLY = 26;
+  int MINUS = 26;
   /** RegularExpression Id. */
-  int DIVIDE = 27;
+  int MULTIPLY = 27;
   /** RegularExpression Id. */
-  int LBRC = 28;
+  int DIVIDE = 28;
   /** RegularExpression Id. */
-  int RBRC = 29;
+  int LBRC = 29;
   /** RegularExpression Id. */
-  int LABRC = 30;
+  int RBRC = 30;
   /** RegularExpression Id. */
-  int RABRC = 31;
+  int LABRC = 31;
   /** RegularExpression Id. */
-  int EQ = 32;
+  int RABRC = 32;
   /** RegularExpression Id. */
-  int NE = 33;
+  int EQ = 33;
   /** RegularExpression Id. */
-  int LT = 34;
+  int NE = 34;
   /** RegularExpression Id. */
-  int GT = 35;
+  int LT = 35;
   /** RegularExpression Id. */
-  int LE = 36;
+  int GT = 36;
   /** RegularExpression Id. */
-  int GE = 37;
+  int LE = 37;
   /** RegularExpression Id. */
-  int DOT = 38;
+  int GE = 38;
   /** RegularExpression Id. */
-  int QUOTEDSTRING = 39;
+  int DOT = 39;
   /** RegularExpression Id. */
-  int REAL_CONST = 40;
+  int QUOTEDSTRING = 40;
   /** RegularExpression Id. */
-  int INT_CONST = 41;
+  int REAL_CONST = 41;
   /** RegularExpression Id. */
-  int DIGIT = 42;
+  int INT_CONST = 42;
   /** RegularExpression Id. */
-  int LETTER = 43;
+  int DIGIT = 43;
+  /** RegularExpression Id. */
+  int LETTER = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -122,6 +124,7 @@ public interface CaesarConstants {
     "\"def\"",
     "\"enddef\"",
     "\"new\"",
+    "\"return\"",
     "\":\"",
     "\",\"",
     "<IDENT>",
