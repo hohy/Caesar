@@ -22,6 +22,14 @@ public class IntegerClass extends InterpreterClass {
     public IntegerClass() {
         super("Integer", 4);
 
+        final List<MethodParam> intParams = new LinkedList<MethodParam>();
+        intParams.add(new MethodParam("x", "Integer"));
+        intParams.add(new MethodParam("y", "Integer"));
+        
+        final List<MethodParam> realParams = new LinkedList<MethodParam>();
+        realParams.add(new MethodParam("x", "Integer"));
+        realParams.add(new MethodParam("y", "Real"));
+
         addOperation("equals", new InterpreterOperation() {
             @Override
             public void call(CaesarInterpreter interpreter) {
@@ -49,23 +57,167 @@ public class IntegerClass extends InterpreterClass {
             @Override
             public void call(CaesarInterpreter interpreter) {
                 logger.log(Level.FINE, "addInteger from IntegerClass is called.");
-                int opa = interpreter.getStack().popInteger();
                 int opb = interpreter.getStack().popInteger();
+                int opa = interpreter.getStack().popInteger();
                 int result = opa + opb;
                 interpreter.getStack().pushInteger(result);
             }
 
             @Override
             public List<MethodParam> getParams() {
-                List<MethodParam> params = new LinkedList<MethodParam>();
-                params.add(new MethodParam("x", "Integer"));
-                params.add(new MethodParam("y", "Integer"));
-                return params;
+                return intParams;
             }
 
             @Override
             public String getReturnType() {
                 return "Integer";
+            }
+        });
+
+        addOperation("subtractInteger", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "subtractInteger from IntegerClass is called.");
+                int opb = interpreter.getStack().popInteger();
+                int opa = interpreter.getStack().popInteger();
+                int result = opa - opb;
+                interpreter.getStack().pushInteger(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return intParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Integer";
+            }
+        });
+
+        addOperation("multiplyInteger", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "multiplyInteger from IntegerClass is called.");
+                int opb = interpreter.getStack().popInteger();
+                int opa = interpreter.getStack().popInteger();
+                int result = opa * opb;
+                interpreter.getStack().pushInteger(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return intParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Integer";
+            }
+        });
+
+        addOperation("divideInteger", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "divideInteger from IntegerClass is called.");
+                int opb = interpreter.getStack().popInteger();
+                int opa = interpreter.getStack().popInteger();
+                double result = opa / opb;
+                interpreter.getStack().pushDouble(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return intParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Real";
+            }
+        });
+
+        addOperation("addReal", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "addReal from IntegerClass is called.");
+                double opb = interpreter.getStack().popDouble();
+                int opa = interpreter.getStack().popInteger();
+                double result = opa + opb;
+                interpreter.getStack().pushDouble(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return realParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Real";
+            }
+        });
+
+        addOperation("subtractReal", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "subtractReal from IntegerClass is called.");
+                double opb = interpreter.getStack().popDouble();
+                int opa = interpreter.getStack().popInteger();
+                double result = opa - opb;
+                interpreter.getStack().pushDouble(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return realParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Real";
+            }
+        });
+
+        addOperation("multiplyReal", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "multiplyReal from IntegerClass is called.");
+                double opb = interpreter.getStack().popDouble();
+                int opa = interpreter.getStack().popInteger();
+                double result = opa * opb;
+                interpreter.getStack().pushDouble(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return realParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Real";
+            }
+        });
+
+        addOperation("divideReal", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "divideReal from IntegerClass is called.");
+                double opb = interpreter.getStack().popDouble();
+                int opa = interpreter.getStack().popInteger();
+                double result = opa / opb;
+                interpreter.getStack().pushDouble(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return realParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Real";
             }
         });
     }
