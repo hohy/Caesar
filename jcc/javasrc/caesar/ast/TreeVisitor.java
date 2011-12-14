@@ -39,4 +39,6 @@ public interface TreeVisitor {
     public void visit(MethodCallTree methodCallTree);
 
     public void visit(ReturnTree returnTree);
+
+    public void visit(WhileTree whileTree);
 }

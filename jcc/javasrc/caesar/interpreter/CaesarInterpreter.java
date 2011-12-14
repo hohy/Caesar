@@ -233,7 +233,19 @@ public class CaesarInterpreter implements TreeVisitor {
         } else if(t.getElseCommands() != null) {
             t.getElseCommands().accept(this);
         }
-    }    
+    }
+
+    @Override
+    public void visit(WhileTree t) {
+        boolean conditionResult = false;
+        t.getCondition().accept(this);
+        conditionResult = stack.popBoolean();
+        while(conditionResult) {
+            t.getCommands().accept(this);
+            t.getCondition().accept(this);
+            conditionResult = stack.popBoolean();
+        }
+    }
 
     @Override
     public void visit(FieldIdentifierTree t) {

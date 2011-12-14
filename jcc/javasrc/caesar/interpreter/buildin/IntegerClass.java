@@ -53,6 +53,29 @@ public class IntegerClass extends InterpreterClass {
             }
         });
 
+        addOperation("lt", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "lt from IntegerClass is called.");
+                int opb = interpreter.getStack().popInteger();
+                int opa = interpreter.getStack().popInteger();
+                boolean result = opa < opb;
+                interpreter.getStack().pushBoolean(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                List<MethodParam> params = new LinkedList<MethodParam>();
+                params.add(new MethodParam("x", "Integer"));
+                return params;
+            }
+
+            @Override
+            public String getReturnType() {
+                return "Boolean";
+            }
+        });
+
         addOperation("addInteger", new InterpreterOperation() {
             @Override
             public void call(CaesarInterpreter interpreter) {

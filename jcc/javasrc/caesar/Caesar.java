@@ -320,12 +320,14 @@ public class Caesar implements CaesarConstants {
   }
 
   static final public CommandTree WhileCmd() throws ParseException {
+  BinaryTree bt;
+  CommandListTree cmdList;
     jj_consume_token(WHILE);
-    Condition();
+    bt = Condition();
     jj_consume_token(COLON);
-    CommandList();
+    cmdList = CommandList();
     jj_consume_token(ENDWHILE);
-   {if (true) return null;}
+   {if (true) return new WhileTree(bt, cmdList);}
     throw new Error("Missing return statement in function");
   }
 
