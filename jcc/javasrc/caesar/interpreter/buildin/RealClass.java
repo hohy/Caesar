@@ -3,6 +3,7 @@ package caesar.interpreter.buildin;
 import caesar.ast.MethodParam;
 import caesar.interpreter.CaesarInterpreter;
 import caesar.interpreter.InterpreterClass;
+
 import caesar.interpreter.InterpreterMethod;
 import caesar.interpreter.InterpreterOperation;
 
@@ -39,6 +40,27 @@ public class RealClass extends InterpreterClass {
                 double opa = interpreter.getStack().popDouble();
                 double opb = interpreter.getStack().popDouble();
                 boolean result = opa == opb;
+                interpreter.getStack().pushBoolean(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                return realParams;
+            }
+
+            @Override
+            public String getReturnType() {
+                return getName();
+            }
+        });
+
+        addOperation("lt", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.log(Level.FINE, "lt from RealClass is called.");
+                double opb = interpreter.getStack().popDouble();
+                double opa = interpreter.getStack().popDouble();
+                boolean result = opa < opb;
                 interpreter.getStack().pushBoolean(result);
             }
 

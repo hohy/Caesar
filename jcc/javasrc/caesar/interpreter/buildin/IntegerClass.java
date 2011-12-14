@@ -220,6 +220,30 @@ public class IntegerClass extends InterpreterClass {
                 return "Real";
             }
         });
+        
+        addOperation("addString", new InterpreterOperation() {
+            @Override
+            public void call(CaesarInterpreter interpreter) {
+                logger.fine("addString from IntegerClass is called");
+                String opb = interpreter.getStack().popString();
+                int opa = interpreter.getStack().popInteger();
+                String result = opa + opb;
+                interpreter.getStack().pushString(result);
+            }
+
+            @Override
+            public List<MethodParam> getParams() {
+                LinkedList<MethodParam> stringParams = new LinkedList<MethodParam>();
+                stringParams.add(new MethodParam("x", "Integer"));
+                stringParams.add(new MethodParam("y", "String"));
+                return stringParams;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public String getReturnType() {
+                return "String";
+            }
+        });
     }
 
 }

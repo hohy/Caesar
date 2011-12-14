@@ -61,8 +61,8 @@ public class StringClass extends InterpreterClass {
             @Override
             public void call(CaesarInterpreter interpreter) {
                 logger.log(Level.FINE, "addString from StringClass is called.");
-                String opa = interpreter.getStack().popString();
                 String opb = interpreter.getStack().popString();
+                String opa = interpreter.getStack().popString();
                 String result = opa + opb;
                 interpreter.getStack().pushString(result);
             }

@@ -213,10 +213,9 @@ public class CaesarInterpreter implements TreeVisitor {
                 case DIVIDE: leftOp.callOperation(this, "divide" + rightOp.getName(), currentEnv); break;
                 case EQ:
                     leftOp.callOperation(this, "equals", currentEnv);
-    //                InterpreterObject opb = stack.pop();
-    //                InterpreterObject opa = stack.pop();
-    //                opa.getType().callOperation("equals", opb);
                     break;
+                case LT:
+                    leftOp.callOperation(this, "lt", currentEnv); break;
                     // Todo add other operators
                 default: // do nothing
             }
