@@ -3,6 +3,7 @@ package caesar.interpreter;
 import caesar.ast.*;
 import caesar.interpreter.buildin.IntegerClass;
 import caesar.interpreter.buildin.RealClass;
+import caesar.interpreter.buildin.StringClass;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -394,7 +395,7 @@ public class CaesarInterpreter implements TreeVisitor {
 
         classTable.put(real.getName(), real);
         
-        InterpreterClass string = new InterpreterClass("String", -1);
+        InterpreterClass string = new StringClass();
         
         classTable.put(string.getName(), string);
         
