@@ -63,6 +63,7 @@ public class BinaryTree extends ExpressionTree {
         if(lo == null || ro == null) return null;
         
         if ((lo != null) && (ro != null) && (lo.equals("Integer") && ro.equals("Integer"))) return "Integer";
+        if ((lo != null) && (ro != null) && (lo.equals("Real") && ro.equals("Real"))) return "Real";
 
         if ((lo != null) && (ro != null) && (lo.equals("Real") && ro.equals("Integer"))) return "Real";
         if ((lo != null) && (ro != null) && (lo.equals("Integer") && ro.equals("Real"))) return "Real";

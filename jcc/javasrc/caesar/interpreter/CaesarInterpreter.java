@@ -2,6 +2,7 @@ package caesar.interpreter;
 
 import caesar.ast.*;
 import caesar.interpreter.buildin.IntegerClass;
+import caesar.interpreter.buildin.RealClass;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -389,91 +390,8 @@ public class CaesarInterpreter implements TreeVisitor {
         
         classTable.put(integer.getName(), integer);
         
-        InterpreterClass real = new InterpreterClass("Real", 8);
-//        real.addOperation("addInteger", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "addInteger from RealClass is called.");
-//                int opa = (Integer) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opa + opb, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });        
-//        real.addOperation("addReal", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "addReal from RealClass is called.");
-//                double opa = (Double) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opa + opb, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });
-//        
-//        real.addOperation("substractInteger", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "substractInteger from RealClass is called.");
-//                int opa = (Integer) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opb - opa, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });        
-//        real.addOperation("substractReal", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "substractReal from RealClass is called.");
-//                double opa = (Double) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opb - opa, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });
-//        
-//        real.addOperation("multiplyInteger", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "multiplyInteger from RealClass is called.");
-//                int opa = (Integer) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opa * opb, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });        
-//        real.addOperation("multiplyReal", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "multiplyReal from RealClass is called.");
-//                double opa = (Double) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opa * opb, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });
-//        
-//        real.addOperation("divideInteger", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "divideInteger from RealClass is called.");
-//                int opa = (Integer) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();
-//                InterpreterObject result = new InterpreterObject(opb / opa, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });        
-//        real.addOperation("divideReal", new InterpreterOperation() {
-//            @Override
-//            public void call() {
-//                logger.log(Level.FINE, "divideReal from RealClass is called.");
-//                double opa = (Double) stack.pop().getValue();
-//                double opb = (Double) stack.pop().getValue();                
-//                InterpreterObject result = new InterpreterObject(opb / opa, classTable.get("Real"));
-//                stack.push(result);
-//            }
-//        });
-        
+        InterpreterClass real = new RealClass();
+
         classTable.put(real.getName(), real);
         
         InterpreterClass string = new InterpreterClass("String", -1);
