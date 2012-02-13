@@ -60,10 +60,14 @@ public class CaesarInterpreter implements TreeVisitor {
         String varName = t.getIdentifier().getName();
         logger.log(Level.FINE, "Creating new variable {0} in enviroment.", varName);
         try {
+
             // environment pro nove vytvareny objekt
             InterpreterEnvironment objectEnv = new InterpreterEnvironment(currentEnv);
             InterpreterClass cls;
-            if(t.getExp() != null) { // null = vytvarime primitivni typ
+
+            boolean primitiveType = t.getExp() != null;
+
+            if(primitiveType) { // vytvarime "primitivni" typ
                 t.getExp().accept(this);
                 cls = getClass(t.getExp());
             } else {    // vytvarime novy objekt
@@ -75,16 +79,30 @@ public class CaesarInterpreter implements TreeVisitor {
                 cls = getClass(t.getIdentifier());
                 byte[] object = new byte[cls.getObjectSize()];
                 int i = 0;
-                for(InterpreterClassField field : cls.getFields()) {                    
-                    // interpret init tree
-                    field.getInitTree().accept(this);
-                    
+                for(InterpreterClassField field : cls.getFields()) {
+
+                    if(field.getInitTree() != null) field.getInitTree().accept(this); // interpretut init tree pokud field neni objekt
+                    else { // vytvor novou instanci tridy fieldu a pointer dej na stack (odtud se pak dal vezme a da se do noveho objektu)
+                        // rekurzivne proto zavolame tuto metodu, akorat v environmentu noveho objektu.
+                        IdentifierTree fit = new FieldIdentifierTree(field.getName());
+                        fit.setType(field.getType().getName());
+                        // je potreba, aby se objekt vytvoril v enviromentu noveho objektu.
+                        InterpreterEnvironment old = currentEnv;
+                        currentEnv = objectEnv;
+                        CreateVariableTree nvt = new CreateVariableTree(fit, null);
+                        nvt.accept(this);
+                        InterpreterObject newObj = currentEnv.searchEnv(field.getName());
+                        stack.pushInteger(newObj.getDataPointer());
+                        currentEnv = old;
+                    }
+
                     // vysledek interpretace vyzvednu ze zasobniku
                     byte[] data;
                     if(field.getType().getObjectSize() != -1) { // pokud vim velikost, tak je proste nactu
-                        data = stack.pop(field.getType().getObjectSize());
+                        if(primitiveType) data = stack.pop(field.getType().getObjectSize());
+                        else data = stack.pop(4);
                     } else { // u stringu velikost nevim... musim si ji nejdrive nacist
-                        int lenght = stack.popInteger();                        
+                        int lenght = stack.popInteger();
                         byte[] rawdata = stack.pop(lenght); // nactu data stringu
                         // k datum je potreba vratit velikost
                         byte[] ldata = ByteConvertor.toByta(lenght);
@@ -96,10 +114,10 @@ public class CaesarInterpreter implements TreeVisitor {
                     // a dam ho do heapy
                     int pointer = heap.store(data);
                     logger.log(Level.FINEST, "Allocating field {0} of class {1} on pointer {2} for result of {3}", new Object[]{field.getName(), cls.getName(), pointer, field.getInitTree()});
-                    
+
                     // pointer z heapy si prekonvertuju
-                    data = ByteConvertor.toByta(pointer);                                        
-                    int offset = field.getOffset();                    
+                    data = ByteConvertor.toByta(pointer);
+                    int offset = field.getOffset();
                     i++;
                     // a dam na spravne misto do objektu.
                     System.arraycopy(data, 0, object, offset, data.length);
@@ -135,8 +153,8 @@ public class CaesarInterpreter implements TreeVisitor {
         }
         
          
-    }    
-    
+    }
+
     /**
      * Prirazeni hodnoty do promenne
      */
