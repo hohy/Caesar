@@ -1,9 +1,10 @@
 package caesar.bcinterpreter.buildin;
 
-import caesar.bcinterpreter.CClass;
-import caesar.bcinterpreter.CField;
+import caesar.bcinterpreter.*;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,8 +14,18 @@ import java.util.LinkedList;
  */
 public class IntegerClass extends CClass {
 
-    public IntegerClass() {
+    public IntegerClass(CaesarBCInterpreter cintr) {
+        super(cintr);
         name = "Integer";
+        mtab = new HashMap<Integer, CMethod>();
+        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod() {
+            @Override
+            public void execute() {
+                CObject object = interpreter.getStack().popObject();
+                int value = ByteConvertor.toInt(object.getFieldsData());
+                System.out.println(value);
+            }
+        });
     }
 
     @Override

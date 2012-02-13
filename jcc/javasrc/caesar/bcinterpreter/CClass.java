@@ -20,6 +20,16 @@ public abstract class CClass {
     protected Map<Integer, CMethod> mtab;
     protected List<CField> fields;
 
+    protected CaesarBCInterpreter interpreter;
+
+    protected CClass(CaesarBCInterpreter interpreter) {
+        this.interpreter = interpreter;
+    }
+
     public abstract int getObjectSize();
     public abstract int getCode();
+
+    public CMethod getMethod(int code) {
+        return mtab.get(code);
+    };
 }

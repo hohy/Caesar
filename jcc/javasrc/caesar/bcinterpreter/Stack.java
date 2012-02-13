@@ -13,12 +13,27 @@ public class Stack {
 
     public Stack(int size) {
         data = new byte[size];
-        pointer = 0;
+        pointer = size-1;
     }
 
     public void pushObject(CObject object) {
         byte[] objData = object.getData();
-        System.arraycopy(objData, 0, data, pointer, objData.length);
-        pointer += data.length;
+        System.arraycopy(objData, 0, data, pointer-objData.length, objData.length);
+        pointer -= objData.length;
+    }
+
+    public CObject popObject() {
+        int objSize = CaesarBCInterpreter.readIntFromBytearray(pointer+CaesarBCInterpreter.POINTER_SIZE,data);
+        byte[] objData = new byte[objSize];
+        System.arraycopy(data,pointer,objData,0,objSize);
+        pointer += objSize;
+        return new CObject(objData);
+    }
+
+    public CObject peekObject() {
+        int objSize = CaesarBCInterpreter.readIntFromBytearray(pointer+CaesarBCInterpreter.POINTER_SIZE,data);
+        byte[] objData = new byte[objSize];
+        System.arraycopy(data,pointer,objData,0,objSize);
+        return new CObject(objData);
     }
 }

@@ -18,7 +18,9 @@ import java.util.Map;
 public class CaesarBCInterpreter {
 
     public static final int POINTER_SIZE = 4;
-    
+    public static final int CLASS_ID_SIZE = 4;
+    public static final int SIZE_INFO_SIZE = 4;
+
     private Heap heap;
     private Stack stack;
     private Constants constants;
@@ -36,7 +38,7 @@ public class CaesarBCInterpreter {
 
         classMap = new HashMap<Integer, CClass>();
         // add build in classes
-        CClass cls = new IntegerClass();
+        CClass cls = new IntegerClass(this);
         classMap.put(cls.getCode(), cls);
 
     }
@@ -69,7 +71,7 @@ public class CaesarBCInterpreter {
     
     public void run() {
 
-        while (sp < bytecode.length) {
+        while (pc < bytecode.length) {
             byte code = bytecode[pc++];
             switch (code) {
                 case Print.code:
@@ -83,8 +85,8 @@ public class CaesarBCInterpreter {
 
     }
 
-    public int getObjectSize(int objTypeCode) {
-        return classMap.get(objTypeCode).getObjectSize();
+    public CClass getCClass(int typeCode) {
+        return classMap.get(typeCode);
     }
 
     public int readIntInstructionParam() {
@@ -124,6 +126,5 @@ public class CaesarBCInterpreter {
     public int getSp() {
         return sp;
     }
-
 
 }

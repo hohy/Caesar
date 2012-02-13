@@ -1,5 +1,8 @@
 package caesar.bcinterpreter.instructions;
 
+import caesar.bcinterpreter.CClass;
+import caesar.bcinterpreter.CMethod;
+import caesar.bcinterpreter.CObject;
 import caesar.bcinterpreter.CaesarBCInterpreter;
 
 /**
@@ -12,7 +15,10 @@ public class Print {
 
     public static final byte code = 0x01;
 
-    public static void execute(CaesarBCInterpreter caesarBCInterpreter) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public static void execute(CaesarBCInterpreter interpreter) {
+        CObject object = interpreter.getStack().peekObject();
+        CClass cls = interpreter.getCClass(object.getTypeCode());
+        CMethod printMethod = cls.getMethod(CMethod.PRINT_METHOD_CODE);
+        printMethod.execute();
     }
 }

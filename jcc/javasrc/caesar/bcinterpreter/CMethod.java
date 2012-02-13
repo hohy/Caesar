@@ -7,7 +7,9 @@ package caesar.bcinterpreter;
  * Time: 11:30
  */
 public abstract class CMethod {
-    
+
+    public static final int PRINT_METHOD_CODE = 1;
+
     private CClass returnType;
     private String name;
     private Integer key;
