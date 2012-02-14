@@ -1,10 +1,10 @@
 package caesar.bcinterpreter;
 
 
+import caesar.bcinterpreter.buildin.DemoClass;
 import caesar.bcinterpreter.buildin.IntegerClass;
 import caesar.bcinterpreter.buildin.StringClass;
-import caesar.bcinterpreter.instructions.Print;
-import caesar.bcinterpreter.instructions.PushConstant;
+import caesar.bcinterpreter.instructions.*;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,12 +28,12 @@ public class CaesarBCInterpreter {
     private Heap heap;
     private Stack stack;
     private Constants constants;
+    private Environment currentEnvironment;
     
     private byte[] bytecode;
     private Map<Integer, CClass> classMap;
     
     private int pc;
-    private int sp;
 
     public CaesarBCInterpreter() {
         logger.info("Caesar interpreter!!!");
@@ -42,13 +42,15 @@ public class CaesarBCInterpreter {
 
     public void init() {
         logger.finer("Initializing interpreter...");
-        heap = new Heap(1000000);
+        heap = new Heap(1000000, this);
         stack = new Stack(1000000);
+        currentEnvironment = new Environment(null);
 
         classMap = new HashMap<Integer, CClass>();
         // add build in classes
         loadClass(new IntegerClass(this));
         loadClass(new StringClass(this));
+        loadClass(new DemoClass(this));
 
     }
 
@@ -81,6 +83,7 @@ public class CaesarBCInterpreter {
 
         bytecode = cbcFile.getBytecode();
         constants = new Constants(cbcFile.getConstants());
+        constants.setInterpreter(this);
     }
     
     public void run() {
@@ -93,6 +96,15 @@ public class CaesarBCInterpreter {
                     break;
                 case PushConstant.code:
                     PushConstant.execute(this);
+                    break;
+                case New.code:
+                    New.execute(this);
+                    break;
+                case Load.code:
+                    Load.execute(this);
+                    break;
+                case LoadField.code:
+                    LoadField.execute(this);
                     break;
             }
         }
@@ -137,8 +149,7 @@ public class CaesarBCInterpreter {
         return pc;
     }
 
-    public int getSp() {
-        return sp;
+    public Environment getCurrentEnvironment() {
+        return currentEnvironment;
     }
-
 }

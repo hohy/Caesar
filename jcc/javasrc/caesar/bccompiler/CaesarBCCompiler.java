@@ -5,15 +5,13 @@ import caesar.bcinterpreter.ByteConvertor;
 import caesar.bcinterpreter.CBCFile;
 import caesar.bcinterpreter.CClass;
 import caesar.bcinterpreter.CObject;
+import caesar.bcinterpreter.buildin.DemoClass;
 import caesar.bcinterpreter.buildin.IntegerClass;
 import caesar.bcinterpreter.buildin.StringClass;
-import caesar.bcinterpreter.instructions.Print;
-import caesar.bcinterpreter.instructions.PushConstant;
+import caesar.bcinterpreter.instructions.*;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,6 +25,9 @@ public class CaesarBCCompiler implements TreeVisitor {
     List<Byte> constants;
     List<Byte> bytecode;
     List<CClass> classList;
+    Map<String, CClass> classNameMap;
+    CompilerEnvironment currentEnvironment;
+    int vars;
     
     public void writeOutput(String path) {
         try {
@@ -44,6 +45,12 @@ public class CaesarBCCompiler implements TreeVisitor {
         constants = new LinkedList<Byte>();
         bytecode = new LinkedList<Byte>();
         classList = new LinkedList<CClass>();
+        currentEnvironment = new CompilerEnvironment(null);
+        classNameMap = new HashMap<String, CClass>();
+        addToClassMap(new IntegerClass(null));
+        addToClassMap(new StringClass(null));
+        addToClassMap(new DemoClass(null));
+        vars = 0;
 
         t.getIdentifier().accept(this);
         t.getCommands().accept(this);
@@ -64,7 +71,11 @@ public class CaesarBCCompiler implements TreeVisitor {
         outputFile.setClassList(classList);
 
     }
-    
+
+    public void addToClassMap(CClass cls) {
+        classNameMap.put(cls.getName(), cls);
+    }
+
     @Override
     public void visit(BinaryTree aThis) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -111,8 +122,20 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(CreateVariableTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(CreateVariableTree t) {
+        CClass type;
+        if(t.getExp() != null) {
+            t.getExp().accept(this);
+            type = classNameMap.get(t.getIdentifier().getType());
+        } else {
+            type = classNameMap.get(t.getIdentifier().getType());
+        }
+        bytecode.add(New.code);
+        int varId = vars++;
+        ObjectInfo i = new ObjectInfo(varId,type);
+        currentEnvironment.add(t.getIdentifier().getName(), i);
+        addIntToByteList(type.getCode(), bytecode);
+        addIntToByteList(varId, bytecode);
     }
 
     @Override
@@ -133,8 +156,19 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(ClassIdentifierTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(ClassIdentifierTree t) {
+        ObjectInfo objectInfo = currentEnvironment.get(t.getName());
+
+        bytecode.add(Load.code);
+        addIntToByteList(objectInfo.getId(),bytecode);
+        
+        for(String identifier : t.getIndetifiers()) {
+            int pos = objectInfo.getType().getFieldPos(identifier);
+            bytecode.add(LoadField.code);
+            addIntToByteList(pos, bytecode);
+        }
+
+
     }
 
     @Override

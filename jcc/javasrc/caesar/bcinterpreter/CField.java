@@ -10,5 +10,17 @@ public class CField {
     
     private CClass type;
     private String name;
-    
+
+    public CField(CClass type, String name) {
+        this.type = type;
+        this.name = name;
+    }
+
+    public CClass getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

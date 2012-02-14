@@ -22,7 +22,7 @@ public abstract class CClass {
 
     protected CaesarBCInterpreter interpreter;
 
-    protected CClass(CaesarBCInterpreter interpreter) {
+    public CClass(CaesarBCInterpreter interpreter) {
         this.interpreter = interpreter;
     }
 
@@ -32,4 +32,17 @@ public abstract class CClass {
     public CMethod getMethod(int code) {
         return mtab.get(code);
     };
+
+    public String getName() {
+        return name;
+    }
+
+    public int getFieldPos(String identifier) {
+        int i = 0;
+        for(CField fld : fields) {
+            if(fld.getName().equals(identifier)) return i;
+            i++;
+        }
+        return -1;
+    }
 }

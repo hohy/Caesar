@@ -28,6 +28,14 @@ public class IntegerClass extends CClass {
                 System.out.println(value);
             }
         });
+
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod() {
+            @Override
+            public void execute() {
+                // vyndam ze stacku prazdny int. Pod nim by se mel nachazet dalsi int, ktery bude ten novy inicializovat
+                CObject object = interpreter.getStack().popObject();
+            }
+        });
     }
 
     @Override
@@ -38,5 +46,10 @@ public class IntegerClass extends CClass {
     @Override
     public int getCode() {
         return code;
+    }
+
+    public static CObject createObject(int i) {
+        byte[] data = ByteConvertor.toByta(i);
+        return new CObject(code, data);
     }
 }

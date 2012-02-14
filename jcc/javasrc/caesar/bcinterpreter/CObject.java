@@ -39,4 +39,10 @@ public class CObject {
         System.arraycopy(data, CClass.HEADER_SIZE, fields, 0, fields.length);
         return fields;
     }
+
+    public int getFieldAddress(int field_id) {
+        byte[] baddr = new byte[CaesarBCInterpreter.POINTER_SIZE];
+        System.arraycopy(data,CClass.HEADER_SIZE + CaesarBCInterpreter.POINTER_SIZE*field_id, baddr, 0, CaesarBCInterpreter.POINTER_SIZE);
+        return ByteConvertor.toInt(baddr);
+    }
 }
