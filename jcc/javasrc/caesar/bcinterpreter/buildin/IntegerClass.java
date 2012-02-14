@@ -14,6 +14,8 @@ import java.util.LinkedList;
  */
 public class IntegerClass extends CClass {
 
+    public static final int code = 1;
+    
     public IntegerClass(CaesarBCInterpreter cintr) {
         super(cintr);
         name = "Integer";
@@ -35,6 +37,6 @@ public class IntegerClass extends CClass {
 
     @Override
     public int getCode() {
-        return 1;
+        return code;
     }
 }

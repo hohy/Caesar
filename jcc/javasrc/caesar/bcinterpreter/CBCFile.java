@@ -17,6 +17,13 @@ public class CBCFile implements Serializable {
     private byte[] bytecode;
     private byte[] constants;
 
+    public CBCFile() {
+    }
+
+    public CBCFile(String fileName) {
+
+    }
+    
     public List<CClass> getClassList() {
         return classList;
     }

@@ -14,6 +14,16 @@ public class CObject {
         data = objBytes;
     }
 
+    public CObject(int code, byte[] data) {
+        int size = data.length + CClass.HEADER_SIZE;
+        this.data = new byte[size];
+        byte[] bcode = ByteConvertor.toByta(code);
+        byte[] bsize = ByteConvertor.toByta(size);
+        System.arraycopy(bcode, 0, this.data, 0, CaesarBCInterpreter.CLASS_ID_SIZE);
+        System.arraycopy(bsize, 0, this.data, CaesarBCInterpreter.CLASS_ID_SIZE, CaesarBCInterpreter.SIZE_INFO_SIZE);
+        System.arraycopy(data, 0, this.data, CClass.HEADER_SIZE, data.length);
+    }
+
     public byte[] getData() {
         return data;
     }

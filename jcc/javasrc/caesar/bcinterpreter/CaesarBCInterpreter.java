@@ -2,12 +2,14 @@ package caesar.bcinterpreter;
 
 
 import caesar.bcinterpreter.buildin.IntegerClass;
+import caesar.bcinterpreter.buildin.StringClass;
 import caesar.bcinterpreter.instructions.Print;
 import caesar.bcinterpreter.instructions.PushConstant;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +18,8 @@ import java.util.Map;
  * Time: 11:20
  */
 public class CaesarBCInterpreter {
+
+    private static final Logger logger = Logger.getLogger(CaesarBCInterpreter.class.getName());
 
     public static final int POINTER_SIZE = 4;
     public static final int CLASS_ID_SIZE = 4;
@@ -31,19 +35,29 @@ public class CaesarBCInterpreter {
     private int pc;
     private int sp;
 
-    public void init() {
+    public CaesarBCInterpreter() {
+        logger.info("Caesar interpreter!!!");
+        logger.finer("Logging test...");
+    }
 
+    public void init() {
+        logger.finer("Initializing interpreter...");
         heap = new Heap(1000000);
         stack = new Stack(1000000);
 
         classMap = new HashMap<Integer, CClass>();
         // add build in classes
-        CClass cls = new IntegerClass(this);
-        classMap.put(cls.getCode(), cls);
+        loadClass(new IntegerClass(this));
+        loadClass(new StringClass(this));
 
     }
 
+    public void loadClass(CClass cls) {
+        classMap.put(cls.getCode(), cls);
+    }
+
     public void loadFile(String path) {
+        logger.finer("Loading program file: " + path);
         try {
             FileInputStream fis = new FileInputStream(path);
             ObjectInputStream io = new ObjectInputStream(fis);
@@ -70,7 +84,7 @@ public class CaesarBCInterpreter {
     }
     
     public void run() {
-
+        logger.finer("Running program...");
         while (pc < bytecode.length) {
             byte code = bytecode[pc++];
             switch (code) {

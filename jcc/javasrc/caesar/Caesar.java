@@ -2,6 +2,8 @@
 package caesar;
 
 import caesar.interpreter.CaesarInterpreter;
+import caesar.bccompiler.CaesarBCCompiler;
+import caesar.bcinterpreter.CaesarBCInterpreter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -25,26 +27,43 @@ public class Caesar implements CaesarConstants {
       logger.log(Level.INFO, "Welcome to Caesar programming laguage!");
       InputStream is = System.in;
       if(args.length > 0) {
-          try {
-              is = new FileInputStream(args[0]);
-          } catch (FileNotFoundException e) {
-              logger.severe("Source file " + args[0] + " not found.");
-          }
-      }
-      Caesar parser = new Caesar(is);
-      try {
-        ProgramTree t = parser.Start();
-        //t.dump("");
-        TreeVisitor v = new DumpCaesarVisitor();
+        if(args[0].equals("compile")) { // compile program
 
-        TreeVisitor interpreter = new CaesarInterpreter();
-        t.accept(v);
-        t.accept(interpreter);
-      } catch (Exception e) {
-        System.out.println(e.getMessage());
-        e.printStackTrace();
+          try {
+                is = new FileInputStream(args[1]);
+          } catch (FileNotFoundException e) {
+                logger.severe("Source file " + args[1] + " not found.");
+          }
+
+          Caesar parser = new Caesar(is);
+          try {
+            ProgramTree t = parser.Start();
+            //t.dump("");
+            TreeVisitor v = new DumpCaesarVisitor();
+            CaesarBCCompiler compiler = new CaesarBCCompiler();
+            //TreeVisitor interpreter = new CaesarInterpreter();
+
+            t.accept(v);
+            //t.accept(interpreter);
+            t.accept(compiler);
+
+            compiler.writeOutput(args[1]);
+          } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+          }
+        } else { // run program
+          CaesarBCInterpreter interpreter = new CaesarBCInterpreter();
+
+          interpreter.init();
+          interpreter.loadFile(args[0]);
+
+          interpreter.run();
       }
+    } else {
+      System.out.println("HELP");
     }
+  }
 
   static final public ProgramTree Start() throws ParseException {
   IdentifierTree i;
@@ -934,4 +953,4 @@ public class Caesar implements CaesarConstants {
   static final public void disable_tracing() {
   }
 
-  }
+}
