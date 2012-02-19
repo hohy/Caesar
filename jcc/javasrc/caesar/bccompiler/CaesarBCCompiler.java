@@ -199,11 +199,12 @@ public class CaesarBCCompiler implements TreeVisitor {
 
         bytecode.add(Load.code);
         addIntToByteList(objectInfo.getId(),bytecode);
-        
+        CClass objectType = objectInfo.getType();
         for(String identifier : t.getIndetifiers()) {
-            int pos = objectInfo.getType().getFieldPos(identifier);
+            int pos = objectType.getFieldPos(identifier);
             bytecode.add(LoadField.code);
             addIntToByteList(pos, bytecode);
+            objectType = objectType.getFieldType(identifier);
         }
 
 
