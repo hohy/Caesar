@@ -45,4 +45,11 @@ public abstract class CClass {
         }
         return -1;
     }
+
+    public CClass getFieldType(String varName) {
+        for(CField fld : fields) {
+            if(fld.getName().equals(varName)) return fld.getType();
+        }
+        return null;
+    }
 }

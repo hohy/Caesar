@@ -31,4 +31,12 @@ public class Environment {
         }
         return -1;
     }
+
+    public void set(int id, int address) {
+        if(map.containsKey(id)) {
+            map.put(id,address);
+        } else if(superEnvironment != null) {
+            superEnvironment.set(id, address);
+        }
+    }
 }

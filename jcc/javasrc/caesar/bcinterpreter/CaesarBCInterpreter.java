@@ -106,6 +106,18 @@ public class CaesarBCInterpreter {
                 case LoadField.code:
                     LoadField.execute(this);
                     break;
+                case Set.code:
+                    Set.execute(this);
+                    break;
+                case SetField.code:
+                    SetField.execute(this);
+                    break;
+                case Point.code:
+                    Point.execute(this);
+                    break;
+                case PointField.code:
+                    PointField.execute(this);
+                    break;
             }
         }
 

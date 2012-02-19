@@ -39,4 +39,26 @@ public class Heap {
         System.arraycopy(data,address,objData,0,objSize);
         return new CObject(objData);
     }
+
+    public void set(int id, CObject obj) {
+        int address = interpreter.getCurrentEnvironment().get(id);
+        int oldObjSize = CaesarBCInterpreter.readIntFromBytearray(address+CaesarBCInterpreter.POINTER_SIZE,data);
+        int newObjSize = obj.getData().length;
+        if(newObjSize <= oldObjSize) {
+            System.arraycopy(obj.getData(),0,data,address,oldObjSize);
+        } else {
+            int newAddress = put(obj);
+            interpreter.getCurrentEnvironment().set(id, newAddress);
+        }
+    }
+
+    /**
+     * Na dane adrese nastavi danou hodnotu
+     * @param address
+     * @param value
+     */
+    public void set(int address, int value) {
+        byte[] vdata = ByteConvertor.toByta(value);
+        System.arraycopy(vdata,0,data,address,vdata.length);
+    }
 }

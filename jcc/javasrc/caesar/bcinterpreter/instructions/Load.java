@@ -16,7 +16,6 @@ public class Load {
 
     public static void execute(CaesarBCInterpreter interpreter) {       
         int id = interpreter.readIntInstructionParam();
-        int address = interpreter.getCurrentEnvironment().get(id);
         CObject obj = interpreter.getHeap().get(id);
         interpreter.getStack().pushObject(obj);
     }

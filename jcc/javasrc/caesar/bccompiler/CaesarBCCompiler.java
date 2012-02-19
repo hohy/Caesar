@@ -9,6 +9,7 @@ import caesar.bcinterpreter.buildin.DemoClass;
 import caesar.bcinterpreter.buildin.IntegerClass;
 import caesar.bcinterpreter.buildin.StringClass;
 import caesar.bcinterpreter.instructions.*;
+import caesar.bcinterpreter.instructions.Set;
 
 import java.io.*;
 import java.util.*;
@@ -117,8 +118,45 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(AssignVariableTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(AssignVariableTree t) {
+        t.getExp().accept(this);
+        String varName = t.getIdentifier().getName();
+        int id = currentEnvironment.get(varName).getId();
+        if(t.getIdentifier() instanceof FieldIdentifierTree) {
+            bytecode.add(Set.code);
+            addIntToByteList(id, bytecode);
+        } else {
+            ClassIdentifierTree cit = (ClassIdentifierTree) t.getIdentifier();
+            CClass currentType = currentEnvironment.get(varName).getType();
+            
+            if(cit.getIndetifiers().size() > 1) { // a.b.c.d
+                bytecode.add(Load.code);            // Load a
+                addIntToByteList(id, bytecode);                
+                for(int i = 0; i < cit.getIndetifiers().size() - 2; i++) { // Load b
+                    varName = cit.getIndetifiers().get(i);
+                    bytecode.add(LoadField.code);
+                    addIntToByteList(currentType.getFieldPos(varName),bytecode);
+                    currentType = currentType.getFieldType(varName);
+                }
+
+                // c
+                varName = cit.getIndetifiers().get(cit.getIndetifiers().size()-2);
+                bytecode.add(PointField.code);
+                addIntToByteList(currentType.getFieldPos(varName),bytecode);
+                currentType = currentType.getFieldType(varName);
+                //d
+                varName = cit.getIndetifiers().get(cit.getIndetifiers().size()-1);
+                bytecode.add(SetField.code);
+                addIntToByteList(currentType.getFieldPos(varName),bytecode);
+            } else { // a.b
+                bytecode.add(Point.code);
+                addIntToByteList(id,bytecode);
+                varName = cit.getIndetifiers().get(0);
+                bytecode.add(SetField.code);
+                addIntToByteList(currentType.getFieldPos(varName),bytecode);
+            }
+
+        }
     }
 
     @Override
@@ -182,8 +220,12 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(FieldIdentifierTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(FieldIdentifierTree t) {
+        ObjectInfo objectInfo = currentEnvironment.get(t.getName());
+        if(objectInfo != null) {
+            bytecode.add(Load.code);
+            addIntToByteList(objectInfo.getId(),bytecode);
+        }
     }
 
     @Override
