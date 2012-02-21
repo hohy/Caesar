@@ -45,7 +45,7 @@ public class Heap {
         int oldObjSize = CaesarBCInterpreter.readIntFromBytearray(address+CaesarBCInterpreter.POINTER_SIZE,data);
         int newObjSize = obj.getData().length;
         if(newObjSize <= oldObjSize) {
-            System.arraycopy(obj.getData(),0,data,address,oldObjSize);
+            System.arraycopy(obj.getData(),0,data,address,newObjSize);
         } else {
             int newAddress = put(obj);
             interpreter.getCurrentEnvironment().set(id, newAddress);

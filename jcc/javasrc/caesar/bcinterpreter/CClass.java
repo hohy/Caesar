@@ -2,6 +2,7 @@ package caesar.bcinterpreter;
 
 import com.sun.org.apache.bcel.internal.classfile.ConstantFieldref;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  * Date: 13.2.12
  * Time: 11:27
  */
-public abstract class CClass {
+public abstract class CClass implements Serializable {
 
     public static final int HEADER_SIZE = 8;
     
@@ -35,6 +36,10 @@ public abstract class CClass {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getFieldPos(String identifier) {

@@ -21,18 +21,19 @@ public class New {
         CClass type = interpreter.getCClass(typeCode);
 
         // create new empty object and push it to stack
-        CObject object = new CObject(typeCode, new byte[type.getObjectSize()]);
-        interpreter.getStack().pushObject(object);
+        CObject object = new CObject(typeCode, new byte[type.getObjectSize()-CClass.HEADER_SIZE]);
+        int address = interpreter.getHeap().put(object);
+        // add object info to environment
+        interpreter.getCurrentEnvironment().add(id, address);
 
+        interpreter.getStack().pushObject(object);
         // call init method on new object
         CMethod init = type.getMethod(CMethod.INIT_METHOD_CODE);
-        init.execute();
+        init.execute(interpreter);
 
         // after object is initialize, pop it from stack and put it to the heap.
         object = interpreter.getStack().popObject();
-        int address = interpreter.getHeap().put(object);
+        interpreter.getHeap().set(id, object);
 
-        // add object info to environment
-        interpreter.getCurrentEnvironment().add(id, address);
     }    
 }

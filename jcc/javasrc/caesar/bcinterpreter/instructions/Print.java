@@ -19,6 +19,6 @@ public class Print {
         CObject object = interpreter.getStack().peekObject();
         CClass cls = interpreter.getCClass(object.getTypeCode());
         CMethod printMethod = cls.getMethod(CMethod.PRINT_METHOD_CODE);
-        printMethod.execute();
+        printMethod.execute(interpreter);
     }
 }

@@ -47,7 +47,11 @@ public class Caesar implements CaesarConstants {
             //t.accept(interpreter);
             t.accept(compiler);
 
-            compiler.writeOutput(args[1]);
+            //compiler.writeOutput(args[1]);
+            CaesarBCInterpreter interpreter = new CaesarBCInterpreter();
+            interpreter.init();
+            interpreter.loadFile(compiler.getOutputFile());
+            interpreter.run();
           } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -92,6 +96,7 @@ public class Caesar implements CaesarConstants {
       case WHILE:
       case PRINTLN:
       case CLASS:
+      case DEF:
       case RETURN:
       case IDENT:
         ;
@@ -147,6 +152,10 @@ public class Caesar implements CaesarConstants {
     case CLASS:
       c = ClassDefinition();
                            {if (true) return c;}
+      break;
+    case DEF:
+      c = MethodDefinition(null);
+                                {if (true) return c;}
       break;
     case IDENT:
       firstIdent = jj_consume_token(IDENT);
@@ -807,7 +816,7 @@ public class Caesar implements CaesarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x90c128,0x0,0x400000,0x20800000,0x21000000,0x90c128,0x20880000,0xc0,0x0,0x20800000,0x20008,0x20008,0x40400000,0x800000,0x40800000,0x6000000,0x6000000,0x18000000,0x18000000,0x20800000,0x80000000,0x20000000,0x20000000,0x0,0x400000,0x20800000,0x20000000,0x20000000,};
+      jj_la1_0 = new int[] {0x92c128,0x0,0x400000,0x20800000,0x21000000,0x92c128,0x20880000,0xc0,0x0,0x20800000,0x20008,0x20008,0x40400000,0x800000,0x40800000,0x6000000,0x6000000,0x18000000,0x18000000,0x20800000,0x80000000,0x20000000,0x20000000,0x0,0x400000,0x20800000,0x20000000,0x20000000,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x80,0x0,0x700,0x0,0x0,0x700,0x0,0x7e,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x700,0x0,0x80,0x80,0x80,0x0,0x700,0x80,0x80,};

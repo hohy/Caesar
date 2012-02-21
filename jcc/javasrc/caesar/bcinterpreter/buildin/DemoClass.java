@@ -16,7 +16,7 @@ public class DemoClass extends CClass {
     
     public static final int code = 3;
 
-    public DemoClass(CaesarBCInterpreter cintr) {
+    public DemoClass(final CaesarBCInterpreter cintr) {
         super(cintr);
         name = "Demo";
         fields = new LinkedList<CField>();
@@ -26,9 +26,9 @@ public class DemoClass extends CClass {
         mtab = new HashMap<Integer, CMethod>();
 
         // init methoda vytvori novou instanci teto tridy. Ta bude obsahovat 3 next urovně. Kazda uroven je oznacena cislem ve value.
-        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod() {
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
             @Override
-            public void execute() {
+            public void execute(CaesarBCInterpreter interpreter) {
                 interpreter.getStack().popObject();
                 byte[] objData = new byte[fields.size()*CaesarBCInterpreter.POINTER_SIZE];
                 int nextPoiner = -1;

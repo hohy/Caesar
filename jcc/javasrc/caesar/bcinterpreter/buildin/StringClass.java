@@ -18,9 +18,9 @@ public class StringClass extends CClass {
         super(cintr);
         name = "String";
         mtab = new HashMap<Integer, CMethod>();
-        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod() {
+        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE) {
             @Override
-            public void execute() {
+            public void execute(CaesarBCInterpreter interpreter) {
                 CObject object = interpreter.getStack().popObject();
                 String value = ByteConvertor.toString(object.getFieldsData());
                 System.out.println(value);

@@ -31,4 +31,8 @@ public class CompilerEnvironment {
 
         return null;
     }
+
+    public CompilerEnvironment getSuperEnvironment() {
+        return superEnvironment;
+    }
 }

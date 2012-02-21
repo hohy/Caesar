@@ -1,5 +1,10 @@
 package caesar.bcinterpreter;
 
+import caesar.bccompiler.CompilerEnvironment;
+
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jan Hýbl
@@ -13,8 +18,33 @@ public abstract class CMethod {
 
     private CClass returnType;
     private String name;
-    private Integer key;
+    private int code;
+    private CompilerEnvironment methodEnvironment;
+    private List<String> params = new LinkedList<String>();
 
+    protected CMethod(Integer code) {
+        this.code = code;
+    }
 
-    public abstract void execute();
+    public abstract void execute(CaesarBCInterpreter interpreter);
+
+    public int getCode() {
+        return code;
+    }
+
+    public CompilerEnvironment getMethodEnvironment() {
+        return methodEnvironment;
+    }
+
+    public void setMethodEnvironment(CompilerEnvironment methodEnvironment) {
+        this.methodEnvironment = methodEnvironment;
+    }
+
+    public List<String> getParams() {
+        return params;
+    }
+    
+    public void addParam(String name) {
+        params.add(name);
+    }
 }

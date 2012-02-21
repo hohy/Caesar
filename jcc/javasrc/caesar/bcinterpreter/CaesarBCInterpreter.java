@@ -118,6 +118,15 @@ public class CaesarBCInterpreter {
                 case PointField.code:
                     PointField.execute(this);
                     break;
+                case Jump.code:
+                    Jump.execute(this);
+                    break;
+                case Call.code:
+                    Call.execute(this);
+                    break;
+                case Return.code:
+                    Return.execute(this);
+                    break;
             }
         }
 
@@ -163,5 +172,9 @@ public class CaesarBCInterpreter {
 
     public Environment getCurrentEnvironment() {
         return currentEnvironment;
+    }
+
+    public void setPc(int pc) {
+        this.pc = pc;
     }
 }

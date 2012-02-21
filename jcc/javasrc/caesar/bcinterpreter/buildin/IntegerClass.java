@@ -2,6 +2,7 @@ package caesar.bcinterpreter.buildin;
 
 import caesar.bcinterpreter.*;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -12,7 +13,7 @@ import java.util.LinkedList;
  * Date: 13.2.12
  * Time: 11:57
  */
-public class IntegerClass extends CClass {
+public class IntegerClass extends CClass implements Serializable {
 
     public static final int code = 1;
     
@@ -20,18 +21,18 @@ public class IntegerClass extends CClass {
         super(cintr);
         name = "Integer";
         mtab = new HashMap<Integer, CMethod>();
-        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod() {
+        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE) {
             @Override
-            public void execute() {
+            public void execute(CaesarBCInterpreter interpreter) {
                 CObject object = interpreter.getStack().popObject();
                 int value = ByteConvertor.toInt(object.getFieldsData());
                 System.out.println(value);
             }
         });
 
-        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod() {
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
             @Override
-            public void execute() {
+            public void execute(CaesarBCInterpreter interpreter) {
                 // vyndam ze stacku prazdny int. Pod nim by se mel nachazet dalsi int, ktery bude ten novy inicializovat
                 CObject object = interpreter.getStack().popObject();
             }
