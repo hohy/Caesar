@@ -5,6 +5,7 @@ import caesar.bcinterpreter.*;
 import caesar.bcinterpreter.buildin.*;
 import caesar.bcinterpreter.instructions.*;
 import caesar.bcinterpreter.instructions.Set;
+import sun.security.util.Cache;
 
 import java.io.*;
 import java.util.*;
@@ -86,8 +87,14 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(BinaryTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(BinaryTree bt) {
+        Operator op = bt.getOperator();
+        bt.getLeftOperand().accept(this);
+        bt.getRightOperand().accept(this);
+        switch (op) {
+            case PLUS: bytecode.add(Add.code); break;
+            case EQ: bytecode.add(Equal.code); break;
+        }
     }
 
     /**
@@ -173,6 +180,9 @@ public class CaesarBCCompiler implements TreeVisitor {
         if(t.getExp() != null) {
             t.getExp().accept(this);
             type = classNameMap.get(t.getIdentifier().getType());
+            if(type.getCode()==MethodsClass.code) {
+                type = methodMap.get(((MethodIdentifierTree)t.getExp()).getName()).getReturnType();
+            }
         } else {
             type = classNameMap.get(t.getIdentifier().getType());
         }
@@ -192,8 +202,24 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(IfTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(IfTree it) {
+        it.getCondition().accept(this);
+        bytecode.add(JumpIfFls.code);
+        int jumpAddress = bytecode.size();
+        addIntToByteList(jumpAddress, bytecode);
+        currentEnvironment = new CompilerEnvironment(currentEnvironment);
+        // compile else part
+        if(it.getElseCommands() != null) it.getElseCommands().accept(this);
+        currentEnvironment = currentEnvironment.getSuperEnvironment();
+        bytecode.add(Jump.code);
+        int elseEndAddress = bytecode.size();
+        addIntToByteList(elseEndAddress, bytecode);
+        setIntInBytecode(jumpAddress, bytecode.size());
+        currentEnvironment = new CompilerEnvironment(currentEnvironment);
+        // compile else part
+        it.getCommands().accept(this);
+        currentEnvironment = currentEnvironment.getSuperEnvironment();
+        setIntInBytecode(elseEndAddress,  bytecode.size());
     }
 
     @Override
@@ -242,6 +268,7 @@ public class CaesarBCCompiler implements TreeVisitor {
         currentEnvironment = currentEnvironment.getSuperEnvironment();
     }
 
+
     @Override
     public void visit(MethodDefinitionTree t) {
         bytecode.add(Jump.code);
@@ -254,6 +281,8 @@ public class CaesarBCCompiler implements TreeVisitor {
             method.getMethodEnvironment().add(p.getName(), new ObjectInfo(vars++, classNameMap.get(p.getClassName())));
             method.addParam(p.getName());
         }
+
+        if(!t.getReturnType().getName().equals("void")) method.setReturnType(classNameMap.get(t.getReturnType().getName()));
 
         methods.addMethod(method.getCode(), method);
         methodMap.put(t.getName().getName(), method);
@@ -291,8 +320,18 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitMethodIdentifier(MethodIdentifierTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visitMethodIdentifier(MethodIdentifierTree methodTree) {
+        CMethod method = methodMap.get(methodTree.getName());
+        int cnt = 0;
+        for(ExpressionTree et : methodTree.getParams()) {
+            et.accept(this);
+            bytecode.add(New.code);
+            addIntToByteList(classNameMap.get(et.getType()).getCode(), bytecode);
+            addIntToByteList(method.getMethodEnvironment().get(method.getParams().get(cnt++)).getId(), bytecode);
+        }
+        bytecode.add(Call.code);
+        addIntToByteList(methods.getCode(),bytecode);
+        addIntToByteList(method.getCode(),bytecode);
     }
 
     @Override
@@ -323,14 +362,26 @@ public class CaesarBCCompiler implements TreeVisitor {
 
     @Override
     public void visit(ReturnTree returnTree) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if(returnTree.getExpression() == null) bytecode.add(Return.code);
+        else {
+            returnTree.getExpression().accept(this);
+            bytecode.add(ReturnTop.code);
+        }
+
     }
 
     @Override
     public void visit(WhileTree whileTree) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
-    
+
+    public void setIntInBytecode(int address, int value) {
+        byte[] end = ByteConvertor.toByta(value);
+        for(int j = 0; j<end.length; j++) {
+            bytecode.set(address+j, end[j]);
+        }
+    }
+
     public int addNewConstant(CObject object) {
         int address = constants.size();
         for(byte b : object.getData()) constants.add(b);

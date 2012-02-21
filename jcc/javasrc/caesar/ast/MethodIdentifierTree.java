@@ -4,20 +4,23 @@
  */
 package caesar.ast;
 
+import java.util.List;
+
 /**
  *
  * @author hohy
  */
 public class MethodIdentifierTree extends IdentifierTree {
 
-    public MethodIdentifierTree(String name) {
+    private List<ExpressionTree> params;
+
+    public MethodIdentifierTree(String name, List<ExpressionTree> params) {
         super(name);
-        System.out.println("New method identifier tree: " + name);
+        this.params = params;
     }
 
     @Override
     public void accept(TreeVisitor visitor) {
-        System.out.println("Visit method identifier tree");
         visitor.visitMethodIdentifier(this);
     }
 
@@ -25,6 +28,8 @@ public class MethodIdentifierTree extends IdentifierTree {
         return super.getName();
     }
 
-    
+    public List<ExpressionTree> getParams() {
+        return params;
+    }
     
 }

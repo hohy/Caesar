@@ -26,6 +26,12 @@ public class StringClass extends CClass {
                 System.out.println(value);
             }
         });
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject object = interpreter.getStack().popObject();
+            }
+        });
 
     }
 

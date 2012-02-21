@@ -37,6 +37,54 @@ public class IntegerClass extends CClass implements Serializable {
                 CObject object = interpreter.getStack().popObject();
             }
         });
+
+        mtab.put(CMethod.ADD_METHOD_CODE, new CMethod(CMethod.ADD_METHOD_CODE) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                CObject result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                // podle typu provedu soucet danym zpusobem
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opA.getFieldsData());
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA+valueB));
+                        break;
+                    default:
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
+                }
+
+                interpreter.getStack().pushObject(result);
+            }
+        });
+
+        mtab.put(CMethod.EQ_METHOD_CODE, new CMethod(CMethod.EQ_METHOD_CODE) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                // podle typu provedu soucet danym zpusobem
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA == valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
     }
 
     @Override

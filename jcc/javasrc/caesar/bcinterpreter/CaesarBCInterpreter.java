@@ -127,6 +127,18 @@ public class CaesarBCInterpreter {
                 case Return.code:
                     Return.execute(this);
                     break;
+                case ReturnTop.code:
+                    ReturnTop.execute(this);
+                    break;
+                case Add.code:
+                    Add.execute(this);
+                    break;
+                case Equal.code:
+                    Equal.execute(this);
+                    break;
+                case JumpIfFls.code:
+                    JumpIfFls.execute(this);
+                    break;
             }
         }
 

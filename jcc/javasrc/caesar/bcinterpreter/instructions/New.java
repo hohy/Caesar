@@ -21,7 +21,8 @@ public class New {
         CClass type = interpreter.getCClass(typeCode);
 
         // create new empty object and push it to stack
-        CObject object = new CObject(typeCode, new byte[type.getObjectSize()-CClass.HEADER_SIZE]);
+        int objSize = type.getObjectSize() > 0 ? type.getObjectSize()-CClass.HEADER_SIZE : 1;
+        CObject object = new CObject(typeCode, new byte[objSize]);
         int address = interpreter.getHeap().put(object);
         // add object info to environment
         interpreter.getCurrentEnvironment().add(id, address);
