@@ -93,6 +93,8 @@ public class CaesarBCCompiler implements TreeVisitor {
         bt.getRightOperand().accept(this);
         switch (op) {
             case PLUS: bytecode.add(Add.code); break;
+            case MINUS: bytecode.add(Sub.code); break;
+            case MULTIPLY: bytecode.add(Mul.code); break;
             case EQ: bytecode.add(Equal.code); break;
         }
     }
@@ -181,7 +183,10 @@ public class CaesarBCCompiler implements TreeVisitor {
             t.getExp().accept(this);
             type = classNameMap.get(t.getIdentifier().getType());
             if(type.getCode()==MethodsClass.code) {
-                type = methodMap.get(((MethodIdentifierTree)t.getExp()).getName()).getReturnType();
+                if(t.getExp() instanceof MethodIdentifierTree)
+                    type = methodMap.get(((MethodIdentifierTree)t.getExp()).getName()).getReturnType();
+                else if(t.getExp() instanceof FieldIdentifierTree)
+                    type = currentEnvironment.get(((FieldIdentifierTree)t.getExp()).getName()).getType();
             }
         } else {
             type = classNameMap.get(t.getIdentifier().getType());
@@ -326,7 +331,11 @@ public class CaesarBCCompiler implements TreeVisitor {
         for(ExpressionTree et : methodTree.getParams()) {
             et.accept(this);
             bytecode.add(New.code);
-            addIntToByteList(classNameMap.get(et.getType()).getCode(), bytecode);
+            int typeCode;
+            if(et.getType() != null) typeCode= classNameMap.get(et.getType()).getCode();
+            else if(et instanceof FieldIdentifierTree) typeCode = currentEnvironment.get(((FieldIdentifierTree)et).getName()).getType().getCode();
+            else typeCode = 0;
+            addIntToByteList(typeCode, bytecode);
             addIntToByteList(method.getMethodEnvironment().get(method.getParams().get(cnt++)).getId(), bytecode);
         }
         bytecode.add(Call.code);

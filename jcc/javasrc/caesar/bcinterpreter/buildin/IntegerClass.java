@@ -51,8 +51,54 @@ public class IntegerClass extends CClass implements Serializable {
                 // podle typu provedu soucet danym zpusobem
                 switch (opB.getTypeCode()) {
                     case IntegerClass.code:
-                        int valueB = ByteConvertor.toInt(opA.getFieldsData());
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
                         result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA+valueB));
+                        break;
+                    default:
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
+                }
+
+                interpreter.getStack().pushObject(result);
+            }
+        });
+
+        mtab.put(CMethod.SUB_METHOD_CODE, new CMethod(CMethod.SUB_METHOD_CODE) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                CObject result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueB-valueA));
+                        break;
+                    default:
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
+                }
+
+                interpreter.getStack().pushObject(result);
+            }
+        });
+
+        mtab.put(CMethod.MUL_METHOD_CODE, new CMethod(CMethod.MUL_METHOD_CODE) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                CObject result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA*valueB));
                         break;
                     default:
                         result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));

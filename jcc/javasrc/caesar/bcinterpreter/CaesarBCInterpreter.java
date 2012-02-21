@@ -6,7 +6,9 @@ import caesar.bcinterpreter.buildin.IntegerClass;
 import caesar.bcinterpreter.buildin.StringClass;
 import caesar.bcinterpreter.instructions.*;
 
+import javax.swing.*;
 import java.io.*;
+import java.lang.management.MemoryUsage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -132,6 +134,12 @@ public class CaesarBCInterpreter {
                     break;
                 case Add.code:
                     Add.execute(this);
+                    break;
+                case Sub.code:
+                    Sub.execute(this);
+                    break;
+                case Mul.code:
+                    Mul.execute(this);
                     break;
                 case Equal.code:
                     Equal.execute(this);
