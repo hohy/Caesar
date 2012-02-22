@@ -1,9 +1,7 @@
 package caesar.bcinterpreter;
 
 
-import caesar.bcinterpreter.buildin.DemoClass;
-import caesar.bcinterpreter.buildin.IntegerClass;
-import caesar.bcinterpreter.buildin.StringClass;
+import caesar.bcinterpreter.buildin.*;
 import caesar.bcinterpreter.instructions.*;
 
 import javax.swing.*;
@@ -53,6 +51,8 @@ public class CaesarBCInterpreter {
         loadClass(new IntegerClass(this));
         loadClass(new StringClass(this));
         loadClass(new DemoClass(this));
+        loadClass(new ArrayClass(this));
+        loadClass(new MethodsClass(this));
 
     }
 

@@ -61,4 +61,10 @@ public class Heap {
         byte[] vdata = ByteConvertor.toByta(value);
         System.arraycopy(vdata,0,data,address,vdata.length);
     }
+
+    public int getInt(int address) {
+        byte[] idata = new byte[4];
+        System.arraycopy(data, address, idata, 0, 4);
+        return ByteConvertor.toInt(idata);
+    }
 }

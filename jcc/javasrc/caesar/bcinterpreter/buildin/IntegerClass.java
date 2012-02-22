@@ -21,7 +21,7 @@ public class IntegerClass extends CClass implements Serializable {
         super(cintr);
         name = "Integer";
         mtab = new HashMap<Integer, CMethod>();
-        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE) {
+        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE, "print") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject object = interpreter.getStack().popObject();
@@ -30,7 +30,7 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
-        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE, "init") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 // vyndam ze stacku prazdny int. Pod nim by se mel nachazet dalsi int, ktery bude ten novy inicializovat
@@ -38,7 +38,7 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
-        mtab.put(CMethod.ADD_METHOD_CODE, new CMethod(CMethod.ADD_METHOD_CODE) {
+        mtab.put(CMethod.ADD_METHOD_CODE, new CMethod(CMethod.ADD_METHOD_CODE, "add") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject opA = interpreter.getStack().popObject();
@@ -62,7 +62,7 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
-        mtab.put(CMethod.SUB_METHOD_CODE, new CMethod(CMethod.SUB_METHOD_CODE) {
+        mtab.put(CMethod.SUB_METHOD_CODE, new CMethod(CMethod.SUB_METHOD_CODE, "sub") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject opA = interpreter.getStack().popObject();
@@ -85,7 +85,7 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
-        mtab.put(CMethod.MUL_METHOD_CODE, new CMethod(CMethod.MUL_METHOD_CODE) {
+        mtab.put(CMethod.MUL_METHOD_CODE, new CMethod(CMethod.MUL_METHOD_CODE, "mul") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject opA = interpreter.getStack().popObject();
@@ -108,7 +108,7 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
-        mtab.put(CMethod.EQ_METHOD_CODE, new CMethod(CMethod.EQ_METHOD_CODE) {
+        mtab.put(CMethod.EQ_METHOD_CODE, new CMethod(CMethod.EQ_METHOD_CODE, "equals") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject opA = interpreter.getStack().popObject();

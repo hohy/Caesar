@@ -26,7 +26,7 @@ public class DemoClass extends CClass {
         mtab = new HashMap<Integer, CMethod>();
 
         // init methoda vytvori novou instanci teto tridy. Ta bude obsahovat 3 next urovně. Kazda uroven je oznacena cislem ve value.
-        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE, "init") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 interpreter.getStack().popObject();

@@ -15,9 +15,8 @@ public class UserDefinedMethod extends CMethod {
     String name;
 
     public UserDefinedMethod(int bcPointer, String name, int code) {
-        super(code);
+        super(code,name);
         this.bcPointer = bcPointer;
-        this.name = name;
     }
 
     @Override

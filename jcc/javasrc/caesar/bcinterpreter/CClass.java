@@ -3,6 +3,7 @@ package caesar.bcinterpreter;
 import com.sun.org.apache.bcel.internal.classfile.ConstantFieldref;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,5 +57,9 @@ public abstract class CClass implements Serializable {
             if(fld.getName().equals(varName)) return fld.getType();
         }
         return null;
+    }
+
+    public Collection<CMethod> getMethods() {
+        return mtab.values();
     }
 }

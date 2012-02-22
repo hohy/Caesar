@@ -28,9 +28,16 @@ public abstract class CMethod {
     private CompilerEnvironment methodEnvironment;
     private List<String> params = new LinkedList<String>();
 
-    protected CMethod(Integer code) {
+    protected CMethod(Integer code, String name) {
         this.code = code;
+        this.name = name;
     }
+
+    protected CMethod(Integer code, String name, List<String> params) {
+        this.code = code;
+        this.name = name;
+        this.params = params;
+    }    
 
     public abstract void execute(CaesarBCInterpreter interpreter);
 
@@ -61,4 +68,8 @@ public abstract class CMethod {
     public void setReturnType(CClass returnType) {
         this.returnType = returnType;
     }
+
+    public String getName() {
+        return name;
+    };
 }

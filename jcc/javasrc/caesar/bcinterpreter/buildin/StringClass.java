@@ -18,7 +18,7 @@ public class StringClass extends CClass {
         super(cintr);
         name = "String";
         mtab = new HashMap<Integer, CMethod>();
-        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE) {
+        mtab.put(CMethod.PRINT_METHOD_CODE, new CMethod(CMethod.PRINT_METHOD_CODE, "print") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject object = interpreter.getStack().popObject();
@@ -26,7 +26,7 @@ public class StringClass extends CClass {
                 System.out.println(value);
             }
         });
-        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE) {
+        mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE, "init") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject object = interpreter.getStack().popObject();

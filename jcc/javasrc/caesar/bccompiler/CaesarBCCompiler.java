@@ -57,6 +57,7 @@ public class CaesarBCCompiler implements TreeVisitor {
         addToClassMap(new IntegerClass(null));
         addToClassMap(new StringClass(null));
         addToClassMap(new DemoClass(null));
+        addToClassMap(new ArrayClass(null));
         methods = new MethodsClass(null);
         classList.add(methods);
         addToClassMap(methods);
@@ -84,6 +85,9 @@ public class CaesarBCCompiler implements TreeVisitor {
 
     public void addToClassMap(CClass cls) {
         classNameMap.put(cls.getName(), cls);
+        for(CMethod method : cls.getMethods()) {
+            methodMap.put(cls.getName()+"."+method.getName(), method);
+        }
     }
 
     @Override
@@ -303,8 +307,37 @@ public class CaesarBCCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visit(ClassMethodIdentifierTree aThis) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void visit(ClassMethodIdentifierTree t) {
+        CMethod method;
+        int classCode;
+        if(t.getName() == null) {
+            method = methodMap.get(t.getMethodName());
+            classCode = methods.getCode();
+        } else {
+            ObjectInfo obj = currentEnvironment.get(t.getName());
+            classCode = obj.getType().getCode();
+            method = methodMap.get(obj.getType().getName() + "." + t.getMethodName());
+
+            int address = addNewConstant(IntegerClass.createObject(obj.getId()));
+            // add push instr.
+            bytecode.add(PushConstant.code);
+            // add constant address
+            addIntToByteList(address, bytecode);
+        }
+
+        int cnt = 0;
+
+        for(ExpressionTree et : t.getParams()) {
+            et.accept(this);
+            if(method.getMethodEnvironment()!=null) {
+                bytecode.add(New.code);
+                addIntToByteList(classNameMap.get(et.getType()).getCode(), bytecode);
+                addIntToByteList(method.getMethodEnvironment().get(method.getParams().get(cnt++)).getId(), bytecode);
+            }
+        }
+        bytecode.add(Call.code);
+        addIntToByteList(classCode,bytecode);
+        addIntToByteList(method.getCode(),bytecode);        
     }
 
     @Override
@@ -355,16 +388,34 @@ public class CaesarBCCompiler implements TreeVisitor {
 
     @Override
     public void visit(MethodCallTree methodCallTree) {
-        CMethod method = methodMap.get(methodCallTree.getMethodName());
+        CMethod method;
+        int classCode;
+        if(methodCallTree.getObjName() == null) {
+            method = methodMap.get(methodCallTree.getMethodName());
+            classCode = methods.getCode();
+        } else {
+            ObjectInfo obj = currentEnvironment.get(methodCallTree.getObjName());
+            classCode = obj.getType().getCode();
+            method = methodMap.get(obj.getType().getName() + "." + methodCallTree.getMethodName());
+            int address = addNewConstant(IntegerClass.createObject(obj.getId()));
+            // add push instr.
+            bytecode.add(PushConstant.code);
+            // add constant address
+            addIntToByteList(address, bytecode);
+        }
+
         int cnt = 0;
+
         for(ExpressionTree et : methodCallTree.getParamsExpressions()) {
             et.accept(this);
-            bytecode.add(New.code);
-            addIntToByteList(classNameMap.get(et.getType()).getCode(), bytecode);
-            addIntToByteList(method.getMethodEnvironment().get(method.getParams().get(cnt++)).getId(), bytecode);
+            if(method.getMethodEnvironment()!=null) {
+                bytecode.add(New.code);
+                addIntToByteList(classNameMap.get(et.getType()).getCode(), bytecode);
+                addIntToByteList(method.getMethodEnvironment().get(method.getParams().get(cnt++)).getId(), bytecode);
+            }
         }
         bytecode.add(Call.code);
-        addIntToByteList(methods.getCode(),bytecode);
+        addIntToByteList(classCode,bytecode);
         addIntToByteList(method.getCode(),bytecode);
 
     }
