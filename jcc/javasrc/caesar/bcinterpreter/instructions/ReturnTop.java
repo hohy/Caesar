@@ -18,6 +18,7 @@ public class ReturnTop {
         int address = interpreter.getStack().popInt();
         interpreter.getStack().pushObject(result);
         interpreter.setPc(address);
+        interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
     }
 
 }

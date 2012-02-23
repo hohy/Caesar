@@ -132,6 +132,9 @@ public class CaesarBCInterpreter {
                 case ReturnTop.code:
                     ReturnTop.execute(this);
                     break;
+                case NewEnv.code:
+                    NewEnv.execute(this);
+                    break;
                 case Add.code:
                     Add.execute(this);
                     break;
@@ -141,11 +144,32 @@ public class CaesarBCInterpreter {
                 case Mul.code:
                     Mul.execute(this);
                     break;
+                case Div.code:
+                    Div.execute(this);
+                    break;
                 case Equal.code:
                     Equal.execute(this);
                     break;
+                case NotEqual.code:
+                    NotEqual.execute(this);
+                    break;
+                case Greater.code:
+                    Greater.execute(this);
+                    break;
+                case Lower.code:
+                    Lower.execute(this);
+                    break;
+                case GreaterEqual.code:
+                    GreaterEqual.execute(this);
+                    break;
+                case LowerEqual.code:
+                    LowerEqual.execute(this);
+                    break;
                 case JumpIfFls.code:
                     JumpIfFls.execute(this);
+                    break;
+                case JumpIfTrue.code:
+                    JumpIfTrue.execute(this);
                     break;
             }
         }
@@ -192,6 +216,10 @@ public class CaesarBCInterpreter {
 
     public Environment getCurrentEnvironment() {
         return currentEnvironment;
+    }
+
+    public void setCurrentEnvironment(Environment currentEnvironment) {
+        this.currentEnvironment = currentEnvironment;
     }
 
     public void setPc(int pc) {

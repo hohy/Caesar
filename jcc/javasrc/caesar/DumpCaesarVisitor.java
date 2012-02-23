@@ -118,12 +118,12 @@ public class DumpCaesarVisitor implements TreeVisitor {
 
     @Override
     public void visitMethodIdentifier(MethodIdentifierTree t) {
-        System.out.println(getSpaces() + "Method call " + t.getMethodName());
+        System.out.println(getSpaces() + "MIT Method call " + t.getMethodName());
     }
 
     @Override
     public void visit(ClassMethodIdentifierTree t) {
-        System.out.println(getSpaces() + "Class method call " + t.getName() + "." + t.getMethodName());
+        System.out.println(getSpaces() + "CMIT Class method call " + t.getName() + "." + t.getMethodName());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class DumpCaesarVisitor implements TreeVisitor {
 
     @Override
     public void visit(MethodCallTree methodCallTree) {
-        System.out.println(getSpaces() + "Method call " + methodCallTree.toString());
+        System.out.println(getSpaces() + "MC Method call " + methodCallTree.toString());
         stackDepth++;
         System.out.println(getSpaces() + "Params:");
         for(ExpressionTree exp: methodCallTree.getParamsExpressions()) {

@@ -33,6 +33,35 @@ public class StringClass extends CClass {
             }
         });
 
+        mtab.put(CMethod.ADD_METHOD_CODE, new CMethod(CMethod.ADD_METHOD_CODE, "add") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                CObject opB = interpreter.getStack().popObject();
+
+                CObject result;
+
+
+                String valueA = ByteConvertor.toString(opA.getFieldsData());
+
+                // podle typu provedu soucet danym zpusobem
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int ivalueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = new CObject(StringClass.code, ByteConvertor.toByta(valueA+ivalueB));
+                        break;
+                    case StringClass.code:
+                        String svalueB = ByteConvertor.toString(opB.getFieldsData());
+                        result = new CObject(StringClass.code, ByteConvertor.toByta(valueA+svalueB));
+                        break;
+                    default:
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
+                }
+
+                interpreter.getStack().pushObject(result);
+            }
+        });
+
     }
 
     @Override

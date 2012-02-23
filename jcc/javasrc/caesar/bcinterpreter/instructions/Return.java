@@ -14,5 +14,6 @@ public class Return {
     public static void execute(CaesarBCInterpreter interpreter) {
         int address = interpreter.getStack().popInt();
         interpreter.setPc(address);
+        interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
     }
 }

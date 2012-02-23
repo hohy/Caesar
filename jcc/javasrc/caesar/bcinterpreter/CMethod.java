@@ -20,13 +20,20 @@ public abstract class CMethod {
     public static final int SUB_METHOD_CODE = 11;
     public static final int MUL_METHOD_CODE = 12;
     public static final int DIV_METHOD_CODE = 13;
+
     public static final int EQ_METHOD_CODE = 20;
+    public static final int NE_METHOD_CODE = 21;
+    public static final int GT_METHOD_CODE = 22;
+    public static final int LT_METHOD_CODE = 23;
+    public static final int GE_METHOD_CODE = 24;
+    public static final int LE_METHOD_CODE = 25;
 
     private CClass returnType;
     private String name;
     private int code;
     private CompilerEnvironment methodEnvironment;
     private List<String> params = new LinkedList<String>();
+
 
     protected CMethod(Integer code, String name) {
         this.code = code;

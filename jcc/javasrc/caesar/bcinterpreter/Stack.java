@@ -62,4 +62,8 @@ public class Stack {
         pointer += 1;
         return ByteConvertor.toBoolean(bdata);
     }
+
+    public boolean isEmpty() {
+        return pointer == data.length-1;
+    }
 }

@@ -75,7 +75,7 @@ public class IntegerClass extends CClass implements Serializable {
                 switch (opB.getTypeCode()) {
                     case IntegerClass.code:
                         int valueB = ByteConvertor.toInt(opB.getFieldsData());
-                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueB-valueA));
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA-valueB));
                         break;
                     default:
                         result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
@@ -108,6 +108,30 @@ public class IntegerClass extends CClass implements Serializable {
             }
         });
 
+        mtab.put(CMethod.DIV_METHOD_CODE, new CMethod(CMethod.DIV_METHOD_CODE, "div") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                CObject result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        int r = valueA/valueB;
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(r));
+                        break;
+                    default:
+                        result = new CObject(IntegerClass.code, ByteConvertor.toByta(valueA));
+                }
+
+                interpreter.getStack().pushObject(result);
+            }
+        });
+
         mtab.put(CMethod.EQ_METHOD_CODE, new CMethod(CMethod.EQ_METHOD_CODE, "equals") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
@@ -123,6 +147,121 @@ public class IntegerClass extends CClass implements Serializable {
                     case IntegerClass.code:
                         int valueB = ByteConvertor.toInt(opB.getFieldsData());
                         result = valueA == valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
+
+        mtab.put(CMethod.NE_METHOD_CODE, new CMethod(CMethod.NE_METHOD_CODE, "notEquals") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA != valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
+
+        mtab.put(CMethod.GT_METHOD_CODE, new CMethod(CMethod.GT_METHOD_CODE, "greater") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA > valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
+
+        mtab.put(CMethod.LT_METHOD_CODE, new CMethod(CMethod.LT_METHOD_CODE, "lower") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA < valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
+
+        mtab.put(CMethod.GE_METHOD_CODE, new CMethod(CMethod.GE_METHOD_CODE, "greaterEquals") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA >= valueB;
+                        break;
+                    default:
+                        result = false;
+                }
+
+                interpreter.getStack().pushBoolean(result);
+            }
+        });
+
+        mtab.put(CMethod.LE_METHOD_CODE, new CMethod(CMethod.LE_METHOD_CODE, "lowerEquals") {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject opA = interpreter.getStack().popObject();
+                int valueA = ByteConvertor.toInt(opA.getFieldsData());
+
+                boolean result;
+
+                CObject opB = interpreter.getStack().popObject();
+
+                switch (opB.getTypeCode()) {
+                    case IntegerClass.code:
+                        int valueB = ByteConvertor.toInt(opB.getFieldsData());
+                        result = valueA <= valueB;
                         break;
                     default:
                         result = false;

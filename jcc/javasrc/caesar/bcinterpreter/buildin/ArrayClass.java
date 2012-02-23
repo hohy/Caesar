@@ -27,6 +27,10 @@ public class ArrayClass extends CClass {
         mtab.put(CMethod.INIT_METHOD_CODE, new CMethod(CMethod.INIT_METHOD_CODE, "init") {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
+                CObject o = interpreter.getStack().popObject();
+                if(interpreter.getStack().isEmpty() || interpreter.getStack().peekObject().getTypeCode() != ArrayClass.code) {
+                    interpreter.getStack().pushObject(o);
+                }
             }
         });
 
@@ -42,13 +46,14 @@ public class ArrayClass extends CClass {
                 System.out.println("Create array with size " + size);
                 int[] pointers = new int[size];
                 for(int i = 0; i < size; i++) {
-                    CObject item = IntegerClass.createObject(i);
+                    CObject item = IntegerClass.createObject(0);
                     pointers[i] = interpreter.getHeap().put(item);
                 }
 
                 CObject array = new CObject(code, ByteConvertor.toByta(pointers));
                 int newAddress = interpreter.getHeap().put(array);
                 interpreter.getCurrentEnvironment().set(id, newAddress);
+                interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
             }
         });
 
@@ -70,6 +75,7 @@ public class ArrayClass extends CClass {
                 CObject item = interpreter.getHeap().getFromAddress(itemPointer);
 
                 interpreter.getStack().pushObject(item);
+                interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
             }
         });
 
@@ -88,11 +94,11 @@ public class ArrayClass extends CClass {
                 int id = ByteConvertor.toInt(thisId.getFieldsData());
 
                 CObject array = interpreter.getHeap().get(id);
-                int arrayPointer = interpreter.getCurrentEnvironment().get(id);
                 int itemAddressPointer = interpreter.getCurrentEnvironment().get(id) + array.getFieldAddress(index);
                 int itemPointer = interpreter.getHeap().put(value);
 
                 interpreter.getHeap().set(itemAddressPointer, itemPointer);
+                interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
             }
         });
 

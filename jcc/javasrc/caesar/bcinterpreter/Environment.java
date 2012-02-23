@@ -39,4 +39,12 @@ public class Environment {
             superEnvironment.set(id, address);
         }
     }
+
+    public Environment getSuperEnvironment() {
+        return superEnvironment;
+    }
+
+    public void setSuperEnvironment(Environment superEnvironment) {
+        this.superEnvironment = superEnvironment;
+    }
 }

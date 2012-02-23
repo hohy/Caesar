@@ -3,6 +3,7 @@ package caesar.bcinterpreter.instructions;
 import caesar.bcinterpreter.CClass;
 import caesar.bcinterpreter.CMethod;
 import caesar.bcinterpreter.CaesarBCInterpreter;
+import caesar.bcinterpreter.Environment;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,6 +19,7 @@ public class Call {
         int mthdId = interpreter.readIntInstructionParam();
         CClass cls = interpreter.getCClass(clsId);
         CMethod mth = cls.getMethod(mthdId);
+        //interpreter.setCurrentEnvironment(new Environment(interpreter.getCurrentEnvironment()));
         mth.execute(interpreter);
     }
 }
