@@ -22,7 +22,7 @@ public class UserDefinedClass extends CClass implements Serializable {
     public int code;
 
     public UserDefinedClass(CaesarBCInterpreter interpreter) {
-        super(interpreter);    //To change body of overridden methods use File | Settings | File Templates.
+        super(interpreter);    //To change body of overridden methods use FileClass | Settings | FileClass Templates.
         fields = new LinkedList<CField>();
         mtab = new HashMap<Integer, CMethod>();
     }

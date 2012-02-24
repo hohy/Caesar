@@ -23,7 +23,7 @@ public class MethodsClass extends CClass {
 
     @Override
     public int getObjectSize() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;  //To change body of implemented methods use FileClass | Settings | FileClass Templates.
     }
 
     @Override

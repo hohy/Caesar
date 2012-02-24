@@ -17,6 +17,7 @@ public class ArrayClass extends CClass {
     public static final int code = 6;
     
     private static final int SET_SIZE_CODE = 10;
+    private static final int GET_SIZE_CODE = 13;
     private static final int GET_CODE = 11;
     private static final int SET_CODE = 12;
     
@@ -54,6 +55,25 @@ public class ArrayClass extends CClass {
                 int newAddress = interpreter.getHeap().put(array);
                 interpreter.getCurrentEnvironment().set(id, newAddress);
                 interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
+            }
+        });
+
+        List<String> getSizeParams = new LinkedList<String>();
+        mtab.put(GET_SIZE_CODE, new CMethod(GET_SIZE_CODE, "getSize", getSizeParams) {
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                CObject thisId = interpreter.getStack().popObject();
+                int id = ByteConvertor.toInt(thisId.getFieldsData());
+                CObject thisObj = interpreter.getHeap().get(id);
+                int size = thisObj.getFieldsData().length/CaesarBCInterpreter.POINTER_SIZE;
+                CObject sizeObj = IntegerClass.createObject(size);
+                interpreter.getStack().pushObject(sizeObj);
+                interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
+            }
+
+            @Override
+            public CClass getReturnType() {
+                return new IntegerClass(null);
             }
         });
 

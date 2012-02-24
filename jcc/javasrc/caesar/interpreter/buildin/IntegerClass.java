@@ -259,7 +259,7 @@ public class IntegerClass extends InterpreterClass {
                 LinkedList<MethodParam> stringParams = new LinkedList<MethodParam>();
                 stringParams.add(new MethodParam("x", "Integer"));
                 stringParams.add(new MethodParam("y", "String"));
-                return stringParams;  //To change body of implemented methods use File | Settings | File Templates.
+                return stringParams;  //To change body of implemented methods use FileClass | Settings | FileClass Templates.
             }
 
             @Override

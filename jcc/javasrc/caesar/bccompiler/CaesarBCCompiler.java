@@ -43,7 +43,7 @@ public class CaesarBCCompiler implements TreeVisitor {
             os.writeObject(outputFile);
             os.close();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  //To change body of catch statement use FileClass | Settings | FileClass Templates.
         }
     }
     
@@ -59,6 +59,7 @@ public class CaesarBCCompiler implements TreeVisitor {
         addToClassMap(new StringClass(null));
         addToClassMap(new DemoClass(null));
         addToClassMap(new ArrayClass(null));
+        addToClassMap(new FileClass(null));
         methods = new MethodsClass(null);
         classList.add(methods);
         addToClassMap(methods);
@@ -196,7 +197,11 @@ public class CaesarBCCompiler implements TreeVisitor {
             if(type.getCode()==MethodsClass.code) {
                 if(t.getExp() instanceof MethodIdentifierTree)
                     type = methodMap.get(((MethodIdentifierTree)t.getExp()).getName()).getReturnType();
-                else if(t.getExp() instanceof FieldIdentifierTree)
+                else if(t.getExp() instanceof ClassMethodIdentifierTree) {
+                    ClassMethodIdentifierTree cmit = (ClassMethodIdentifierTree)t.getExp();
+                    ObjectInfo obj = currentEnvironment.get(cmit.getName());
+                    type = methodMap.get(obj.getType().getName() + "." + cmit.getMethodName()).getReturnType();
+                } else if(t.getExp() instanceof FieldIdentifierTree)
                     type = currentEnvironment.get(((FieldIdentifierTree)t.getExp()).getName()).getType();
             }
         } else {
@@ -334,8 +339,6 @@ public class CaesarBCCompiler implements TreeVisitor {
         }
 
         int cnt = 0;
-
-
         for(ExpressionTree et : t.getParams()) {
             et.accept(this);
             if(method.getMethodEnvironment()!=null) {
@@ -424,6 +427,11 @@ public class CaesarBCCompiler implements TreeVisitor {
             bytecode.add(PushConstant.code);
             // add constant address
             addIntToByteList(address, bytecode);
+        }
+
+        if(method == null) {
+            System.err.println("Nenalezena metoda: " + methodCallTree.getMethodName());
+            System.exit(1);
         }
 
         int cnt = 0;

@@ -8,7 +8,7 @@ package caesar;
  */
 public interface CaesarConstants {
 
-  /** End of File. */
+  /** End of FileClass. */
   int EOF = 0;
   /** RegularExpression Id. */
   int PROGRAM = 1;

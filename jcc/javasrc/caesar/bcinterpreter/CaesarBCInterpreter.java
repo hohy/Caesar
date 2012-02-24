@@ -53,6 +53,7 @@ public class CaesarBCInterpreter {
         loadClass(new DemoClass(this));
         loadClass(new ArrayClass(this));
         loadClass(new MethodsClass(this));
+        loadClass(new FileClass(this));
 
     }
 
@@ -71,9 +72,9 @@ public class CaesarBCInterpreter {
             loadFile(cbcFile);
 
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  //To change body of catch statement use FileClass | Settings | FileClass Templates.
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  //To change body of catch statement use FileClass | Settings | FileClass Templates.
         }
 
     }
@@ -170,6 +171,9 @@ public class CaesarBCInterpreter {
                     break;
                 case JumpIfTrue.code:
                     JumpIfTrue.execute(this);
+                    break;
+                default:
+                    System.out.println("Unknown instruction code: " + code);
                     break;
             }
         }
