@@ -29,7 +29,12 @@ public class ArrayClass extends CClass {
             @Override
             public void execute(CaesarBCInterpreter interpreter) {
                 CObject o = interpreter.getStack().popObject();
-                if(interpreter.getStack().isEmpty() || interpreter.getStack().peekObject().getTypeCode() != ArrayClass.code) {
+//                if(!interpreter.getStack().isEmpty()) {
+//                    int i = interpreter.getStack().popInt();
+//                    interpreter.getStack().pushInt(i);
+//                    if(i != ArrayClass.code) interpreter.getStack().pushObject(o);
+//                }
+                if(interpreter.getStack().isEmpty() || interpreter.getStack().peekInt() != ArrayClass.code) {
                     interpreter.getStack().pushObject(o);
                 }
             }

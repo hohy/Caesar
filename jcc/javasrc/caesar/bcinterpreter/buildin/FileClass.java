@@ -2,10 +2,7 @@ package caesar.bcinterpreter.buildin;
 
 import caesar.bcinterpreter.*;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +18,7 @@ public class FileClass extends CClass {
     public static final int code = 7;
     
     public static final int READ_METHOD_CODE = 100;
-    public static final int WRITE_METHOD_CODE = 100;
+    public static final int WRITE_METHOD_CODE = 101;
 
     public FileClass(CaesarBCInterpreter interpreter) {
         super(interpreter);
@@ -72,7 +69,43 @@ public class FileClass extends CClass {
                 interpreter.getStack().pushObject(array);
                 interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
             }
-        });        
+        });
+
+        List<String> writeParams = new LinkedList<String>();
+        writeParams.add("file");
+        writeParams.add("data");
+        mtab.put(WRITE_METHOD_CODE, new CMethod(WRITE_METHOD_CODE, "write") {
+            @Override
+            public CClass getReturnType() {
+                return new ArrayClass(null);
+            }
+
+            @Override
+            public void execute(CaesarBCInterpreter interpreter) {
+                
+                CObject value = interpreter.getStack().popObject();
+                int[] dataPointers = ByteConvertor.toIntA(value.getFieldsData());
+                
+                CObject param = interpreter.getStack().popObject();
+                String fileName = ByteConvertor.toString(param.getFieldsData());
+                
+                CObject thisId = interpreter.getStack().popObject();
+                
+                try {
+                    PrintWriter pw = new PrintWriter(new File(fileName));
+                    for(int numbPointer : dataPointers) {
+                        CObject number = interpreter.getHeap().getFromAddress(numbPointer);
+                        pw.println(ByteConvertor.toInt(number.getFieldsData()));
+                    }
+                    pw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+                interpreter.setCurrentEnvironment(interpreter.getCurrentEnvironment().getSuperEnvironment());
+            }
+        });
+
     }
 
     @Override

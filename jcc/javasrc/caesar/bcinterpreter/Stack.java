@@ -66,4 +66,10 @@ public class Stack {
     public boolean isEmpty() {
         return pointer == data.length-1;
     }
+
+    public int peekInt() {
+        byte[] data = new byte[CaesarBCInterpreter.POINTER_SIZE];
+        System.arraycopy(this.data,pointer,data,0,CaesarBCInterpreter.POINTER_SIZE);
+        return ByteConvertor.toInt(data);
+    }
 }
