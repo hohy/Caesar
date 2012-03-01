@@ -1,5 +1,6 @@
 package caesar.bcinterpreter.instructions;
 
+import caesar.bcinterpreter.ByteConvertor;
 import caesar.bcinterpreter.CObject;
 import caesar.bcinterpreter.CaesarBCInterpreter;
 
@@ -15,7 +16,12 @@ public class PointField {
     public static void execute(CaesarBCInterpreter interpreter) {
         int fieldId = interpreter.readIntInstructionParam();
         CObject object = interpreter.getStack().popObject();
-        int address = object.getFieldAddress(fieldId);
+
+        int addressOffset = object.getFieldAddress(fieldId);
+        byte[] baddress = new byte[CaesarBCInterpreter.POINTER_SIZE];
+        System.arraycopy(object.getData(),addressOffset, baddress, 0, baddress.length);
+        int address = ByteConvertor.toInt(baddress);
+
         interpreter.getStack().pushInt(address);
     }
 }
